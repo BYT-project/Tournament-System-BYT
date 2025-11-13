@@ -69,7 +69,13 @@ public class Tournament {
     }
 
     public void setChampion(String championName) {
-
+        if (championName == null) {
+            this.championName = null; // clear value explicitly allowed
+            return;
+        }
+        if (championName.trim().isEmpty())
+            throw new InvalidValueException("Champion name cannot be empty.");
+        this.championName = championName;
     }
 
     public void setName(String name) {
