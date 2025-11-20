@@ -1,5 +1,7 @@
 package com.example.tournamentsystembyt.model;
 
+import com.example.tournamentsystembyt.helpers.ExtentPersistence;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,4 +75,11 @@ public class Team {
     public int getRankPoints() { return rankPoints; }
     public List<Player> getPlayers() { return players; }
     public List<Coach> getCoaches() { return coaches; }
+
+    private static List<Team> extent = new ArrayList<>();
+
+    public static List<Team> getExtent() { return new ArrayList<>(extent); }
+    public static void clearExtent() { extent.clear(); }
+    public static boolean saveExtent() { return ExtentPersistence.saveExtent(Team.class, extent); }
+    public static void loadExtent() { extent = ExtentPersistence.loadExtent(Team.class); }
 }
