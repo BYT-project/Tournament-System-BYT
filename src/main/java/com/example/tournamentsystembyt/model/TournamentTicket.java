@@ -1,19 +1,36 @@
 package com.example.tournamentsystembyt.model;
 
-public class TournamentTicket extends Ticket {
-    private  Stadium stadium;
-    private Integer seatNumber;
+import com.example.tournamentsystembyt.exceptions.InvalidValueException;
+import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
+import com.example.tournamentsystembyt.exceptions.NullObjectException;
 
-    public TournamentTicket(String id, double price, String status, Stadium stadium, Integer seatNumber) {
+public class TournamentTicket extends Ticket {
+
+    private Stadium stadium;
+    private Integer seatNumber; // 0..1 (optional)
+
+    public TournamentTicket(String id,
+                            double price,
+                            String status,
+                            Stadium stadium,
+                            Integer seatNumber) {
+
         super(id, price, "TOURNAMENT", status);
-        if (stadium == null) {
-            throw new IllegalArgumentException("Stadium cannot be empty");
+
+        setStadium(stadium);
+        setSeatNumber(seatNumber); // may be null
+    }
+
+    private void validateSeatNumber(Integer seatNumber) {
+        if (seatNumber == null) return; // optional
+        if (seatNumber <= 0) {
+            throw new NegativeNumberException("Seat number", seatNumber);
         }
-        if (seatNumber == null) {
-            throw new IllegalArgumentException("Seat number cannot be empty");
+        if (stadium != null && seatNumber > stadium.getCapacity()) {
+            throw new InvalidValueException(
+                    "Seat number must be between 1 and " + stadium.getCapacity() + "."
+            );
         }
-        this.stadium = stadium;
-        this.seatNumber = seatNumber;
     }
 
     public Stadium getStadium() {
@@ -23,17 +40,19 @@ public class TournamentTicket extends Ticket {
     public Integer getSeatNumber() {
         return seatNumber;
     }
+
     public void setStadium(Stadium stadium) {
         if (stadium == null) {
-            throw new IllegalArgumentException("Stadium cannot be empty");
+            throw new NullObjectException("Stadium");
         }
         this.stadium = stadium;
+
+        // If seat is already chosen, re-validate it with the new stadium
+        validateSeatNumber(this.seatNumber);
     }
+
     public void setSeatNumber(Integer seatNumber) {
-        if (seatNumber == null) {
-            throw new IllegalArgumentException("Seat number cannot be empty");
-        }
         this.seatNumber = seatNumber;
+        validateSeatNumber(this.seatNumber);
     }
-    
 }
