@@ -16,10 +16,6 @@ public class MediaPartner {
         setType(type);
     }
 
-    // -------------------------------------
-    //              VALIDATION
-    // -------------------------------------
-
     public void setName(String name) {
         if (name == null || name.trim().isEmpty()) {
             throw new NullOrEmptyStringException("Media partner name");
@@ -62,15 +58,8 @@ public class MediaPartner {
             throw new InvalidValueException("Media partner type must contain at least 2 characters.");
         }
 
-        // Optional: restrict to known types (TV, Streaming, Newspaper, Sponsor, etc.)
-        // If needed later, we can convert this to an enum or controlled list.
-
         this.type = trimmed;
     }
-
-    // -------------------------------------
-    //               GETTERS
-    // -------------------------------------
 
     public String getName() {
         return name;

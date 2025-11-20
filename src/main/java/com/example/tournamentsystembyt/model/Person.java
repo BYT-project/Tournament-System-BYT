@@ -86,7 +86,6 @@ public abstract class Person {
             throw new NullOrEmptyStringException("Email");
         }
         String trimmed = email.trim();
-        // Very simple email check, enough for this project
         if (!trimmed.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
             throw new InvalidEmailException(trimmed);
         }
@@ -98,7 +97,6 @@ public abstract class Person {
             throw new NullOrEmptyStringException("Phone number");
         }
         String trimmed = phone.trim();
-        // Allow +, digits, spaces and dashes
         if (!trimmed.matches("^[+0-9][0-9\\-\\s]{5,}$")) {
             throw new InvalidValueException("Phone number has an invalid format.");
         }

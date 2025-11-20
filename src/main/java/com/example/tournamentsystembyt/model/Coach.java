@@ -13,8 +13,7 @@ import java.util.List;
 public class Coach extends Person {
     private String role;
     private int experience; // in years
-    // multi-valued attribute
-    private final List<Team> teamsCoached;
+    private final List<Team> teamsCoached;     // multi-valued attribute
 
     public Coach(String firstName,
                  String lastName,
@@ -72,7 +71,6 @@ public class Coach extends Person {
     }
 
     public List<Team> getTeamsCoached() {
-        // Return an unmodifiable copy to protect the internal list
         return Collections.unmodifiableList(new ArrayList<>(teamsCoached));
     }
 }

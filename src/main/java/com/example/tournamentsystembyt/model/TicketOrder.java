@@ -33,10 +33,6 @@ public class TicketOrder {
         EXTENT.add(this);
     }
 
-    // --------------------------
-    //         GETTERS
-    // --------------------------
-
     public LocalDate getCreatedAt() {
         return createdAt;
     }
@@ -61,10 +57,6 @@ public class TicketOrder {
         return id;
     }
 
-    // --------------------------
-    //       VALIDATION
-    // --------------------------
-
     private void validateAmount(double amount) {
         if (amount < 0) {
             throw new NegativeNumberException("Amount", amount);
@@ -80,10 +72,6 @@ public class TicketOrder {
             throw new InvalidValueException("Invalid order status: " + trimmed);
         }
     }
-
-    // --------------------------
-    //          SETTERS
-    // --------------------------
 
     public void calculateTotal() {
         this.amount = tickets.stream()
@@ -104,10 +92,6 @@ public class TicketOrder {
     public void setPayment(Payment payment) {
         this.payment = payment;
     }
-
-    // --------------------------
-    //      BUSINESS LOGIC
-    // --------------------------
 
     public void addTicket(Ticket ticket) {
         if (ticket == null) {
@@ -147,10 +131,6 @@ public class TicketOrder {
         }
         this.status = "CANCELLED";
     }
-
-    // --------------------------
-    //         EXTENT
-    // --------------------------
 
     public static List<TicketOrder> getExtent() {
         return Collections.unmodifiableList(new ArrayList<>(EXTENT));

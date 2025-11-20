@@ -43,10 +43,6 @@ public class Tournament {
         this.teams = new ArrayList<>();
     }
 
-    // ------------------------------
-    //       MEDIA PARTNERS
-    // ------------------------------
-
     public void addMediaPartner(MediaPartner partner) {
         if (partner == null) {
             throw new NullObjectException("Media partner");
@@ -56,10 +52,6 @@ public class Tournament {
         }
         mediaPartners.add(partner);
     }
-
-    // ------------------------------
-    //       STAGE MANAGEMENT
-    // ------------------------------
 
     public void addStage(Stage stage) {
         if (stage == null) {
@@ -107,10 +99,6 @@ public class Tournament {
         return stage;
     }
 
-    // ------------------------------
-    //         TEAM MANAGEMENT
-    // ------------------------------
-
     public void addTeam(Team team) {
         if (team == null) {
             throw new NullObjectException("Team");
@@ -128,10 +116,6 @@ public class Tournament {
         teams.remove(team);
     }
 
-    // ------------------------------
-    //        TOURNAMENT FLOW
-    // ------------------------------
-
     public void createTournament() {
         if (teams.isEmpty()) {
             throw new InvalidValueException("A tournament must have at least one team.");
@@ -139,21 +123,18 @@ public class Tournament {
         if (stages.isEmpty()) {
             throw new InvalidValueException("Tournament must contain at least one stage before creation.");
         }
-        // Additional logic goes here
     }
 
     public void generateSchedule() {
         if (teams.size() < 2) {
             throw new InvalidValueException("At least two teams are required to generate a schedule.");
         }
-        // Additional logic goes here
     }
 
     public void start() {
         if (startDate.after(new Date())) {
             throw new InvalidValueException("Cannot start the tournament before the start date.");
         }
-        // Additional logic goes here
     }
 
     public void finish() {
@@ -161,16 +142,11 @@ public class Tournament {
         if (championName == null || championName.trim().isEmpty()) {
             throw new InvalidValueException("Tournament cannot finish without selecting a champion.");
         }
-        // Additional logic goes here
     }
 
     public void cancelTournament() {
         // Logic for cancelling a tournament (status, refunds, etc.)
     }
-
-    // ------------------------------
-    //           SETTERS
-    // ------------------------------
 
     public void setChampion(String championName) {
         if (championName == null) {
@@ -231,10 +207,6 @@ public class Tournament {
         this.registrationFee = registrationFee;
     }
 
-    // ------------------------------
-    //       STRING VALIDATION
-    // ------------------------------
-
     private void validateString(String value, String fieldName) {
         if (value == null || value.trim().isEmpty()) {
             throw new NullOrEmptyStringException(fieldName);
@@ -247,10 +219,6 @@ public class Tournament {
             throw new InvalidValueException(fieldName + " contains invalid characters.");
         }
     }
-
-    // ------------------------------
-    //           GETTERS
-    // ------------------------------
 
     public String getName() {
         return name;

@@ -24,7 +24,6 @@ public class DigitalTicket {
             throw new NullOrEmptyStringException("Download link");
         }
         String trimmed = downloadLink.trim();
-        // Very simple URL-like check
         if (!trimmed.matches("^(https?://).+")) {
             throw new InvalidValueException("Download link must start with http:// or https://");
         }

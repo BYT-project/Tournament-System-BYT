@@ -35,10 +35,6 @@ public class Match {
         this.winnerTeamId = null;
     }
 
-    // -----------------------------
-    //         MATCH FLOW
-    // -----------------------------
-
     public void assignReferee() {
         // To be implemented
     }
@@ -78,10 +74,6 @@ public class Match {
         // Event handling logic later
     }
 
-    // -----------------------------
-    //      SET RESULTS
-    // -----------------------------
-
     public void setResults(int homeScore, int awayScore, int winnerTeamId) {
         if (homeScore < 0) throw new NegativeNumberException("Home score", homeScore);
         if (awayScore < 0) throw new NegativeNumberException("Away score", awayScore);
@@ -106,10 +98,6 @@ public class Match {
         }
     }
 
-    // -----------------------------
-    //         VALIDATION
-    // -----------------------------
-
     public void setStartDate(LocalDate startDate) {
         if (startDate == null) {
             throw new NullObjectException("Start date");
@@ -133,7 +121,6 @@ public class Match {
         }
         String trimmed = status.trim();
 
-        // Restrict to known states
         if (!trimmed.matches("(?i)Scheduled|Ongoing|Paused|Finished|Cancelled")) {
             throw new InvalidValueException("Invalid match status: " + trimmed);
         }
@@ -147,10 +134,6 @@ public class Match {
         }
         this.stage = stage;
     }
-
-    // -----------------------------
-    //           GETTERS
-    // -----------------------------
 
     public LocalDate getStartDate() {
         return startDate;

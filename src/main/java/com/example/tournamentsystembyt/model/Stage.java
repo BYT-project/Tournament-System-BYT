@@ -23,10 +23,6 @@ public abstract class Stage {
         this.matches = new ArrayList<>();
     }
 
-    // ------------------------------
-    //        BUSINESS LOGIC
-    // ------------------------------
-
     public void seedTeams() {
         // Will be implemented later
     }
@@ -45,10 +41,6 @@ public abstract class Stage {
         // Will be implemented later
     }
 
-    // ------------------------------
-    //          VALIDATION
-    // ------------------------------
-
     public void setId(int id) {
         if (id <= 0) {
             throw new InvalidValueException("Stage ID must be positive.");
@@ -66,10 +58,6 @@ public abstract class Stage {
         }
         this.name = trimmed;
     }
-
-    // ------------------------------
-    //            GETTERS
-    // ------------------------------
 
     public int getId() {
         return id;

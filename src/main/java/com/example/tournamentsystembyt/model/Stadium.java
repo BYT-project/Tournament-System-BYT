@@ -20,10 +20,6 @@ public class Stadium {
         this.location = location.trim();
     }
 
-    // ------------------------------------
-    //            VALIDATION
-    // ------------------------------------
-
     private void validateName(String name) {
         if (name == null || name.trim().isEmpty()) {
             throw new NullOrEmptyStringException("Stadium name");
@@ -60,10 +56,6 @@ public class Stadium {
         }
     }
 
-    // ------------------------------------
-    //              SETTERS
-    // ------------------------------------
-
     public void setCapacity(int capacity) {
         validateCapacity(capacity);
         this.capacity = capacity;
@@ -73,10 +65,6 @@ public class Stadium {
         validateLocation(location);
         this.location = location.trim();
     }
-
-    // ------------------------------------
-    //              GETTERS
-    // ------------------------------------
 
     public String getName() {
         return name;

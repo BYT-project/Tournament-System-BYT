@@ -36,10 +36,6 @@ public class Payment {
         return paidAt;
     }
 
-    // --------------------------
-    //       VALIDATION
-    // --------------------------
-
     private void validateMethod(String method) {
         if (method == null || method.trim().isEmpty()) {
             throw new NullOrEmptyStringException("Payment method");
@@ -48,7 +44,6 @@ public class Payment {
         if (trimmed.length() < 2) {
             throw new InvalidValueException("Payment method must contain at least 2 characters.");
         }
-        // Could be CARD, CASH, TRANSFER, etc.
     }
 
     private void validateAmount(double amount) {
@@ -56,10 +51,6 @@ public class Payment {
             throw new NegativeNumberException("Amount", amount);
         }
     }
-
-    // --------------------------
-    //          SETTERS
-    // --------------------------
 
     public void setMethod(String method) {
         validateMethod(method);
@@ -70,10 +61,6 @@ public class Payment {
         validateAmount(amount);
         this.amount = amount;
     }
-
-    // --------------------------
-    //      BUSINESS LOGIC
-    // --------------------------
 
     public void pay() {
         if (paidAt != null) {

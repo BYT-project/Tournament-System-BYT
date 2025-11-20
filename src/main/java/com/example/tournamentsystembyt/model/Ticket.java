@@ -20,10 +20,6 @@ public class Ticket {
         setStatus(status);
     }
 
-    // --------------------------
-    //        VALIDATION
-    // --------------------------
-
     private void validateId(String id) {
         if (id == null || id.trim().isEmpty()) {
             throw new NullOrEmptyStringException("Ticket ID");
@@ -42,7 +38,6 @@ public class Ticket {
         if (trimmed.length() < 2) {
             throw new InvalidValueException("Ticket type must contain at least 2 characters.");
         }
-        // Could be: MATCH, TOURNAMENT, etc. We only ensure it's meaningful.
     }
 
     private void validateStatus(String status) {
@@ -51,7 +46,6 @@ public class Ticket {
         }
         String trimmed = status.trim();
 
-        // Optional: restrict to a controlled set of statuses
         if (!trimmed.matches("(?i)AVAILABLE|RESERVED|SOLD|CANCELLED")) {
             throw new InvalidValueException("Invalid ticket status: " + trimmed);
         }
@@ -62,10 +56,6 @@ public class Ticket {
             throw new NegativeNumberException("Price", price);
         }
     }
-
-    // --------------------------
-    //          SETTERS
-    // --------------------------
 
     public void setId(String id) {
         validateId(id);
@@ -87,10 +77,6 @@ public class Ticket {
         this.status = status.trim().toUpperCase();
     }
 
-    // --------------------------
-    //          GETTERS
-    // --------------------------
-
     public String getId() {
         return id;
     }
@@ -107,11 +93,6 @@ public class Ticket {
         return status;
     }
 
-    // --------------------------
-    //      BUSINESS LOGIC
-    // --------------------------
-
-    // Complex behavior: Calculate total price including tax
     public double calculateTotalPrice() {
         return price + (price * TAX_FEE);
     }

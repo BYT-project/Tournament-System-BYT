@@ -31,10 +31,6 @@ public class Team {
         this.coaches = new ArrayList<>();
     }
 
-    // ---------------------------
-    //     PLAYER MANAGEMENT
-    // ---------------------------
-
     public void addPlayer(Player player) {
         if (player == null) {
             throw new NullObjectException("Player");
@@ -51,10 +47,6 @@ public class Team {
         }
         players.remove(player);
     }
-
-    // ---------------------------
-    //     COACH MANAGEMENT
-    // ---------------------------
 
     public void addCoach(Coach coach) {
         if (coach == null) {
@@ -75,10 +67,6 @@ public class Team {
         }
         coaches.remove(coach);
     }
-
-    // ---------------------------
-    //       VALIDATION
-    // ---------------------------
 
     public void setName(String name) {
         validateString(name, "Team name");
@@ -102,10 +90,6 @@ public class Team {
         this.rankPoints = rankPoints;
     }
 
-    // ---------------------------
-    //      STRING VALIDATION
-    // ---------------------------
-
     private void validateString(String value, String fieldName) {
         if (value == null || value.trim().isEmpty()) {
             throw new NullOrEmptyStringException(fieldName);
@@ -118,10 +102,6 @@ public class Team {
             throw new InvalidValueException(fieldName + " contains invalid characters.");
         }
     }
-
-    // ---------------------------
-    //         GETTERS
-    // ---------------------------
 
     public String getName() {
         return name;
