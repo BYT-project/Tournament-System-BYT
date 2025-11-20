@@ -21,28 +21,14 @@ public class Team {
         setRankPoints(rankPoints);
         this.players = new ArrayList<>();
         this.coaches = new ArrayList<>();
+
+        extent.add(this);
     }
 
-    public void addPlayer(Player player) {
-        if (player == null)
-            throw new IllegalArgumentException("Player cannot be null.");
-        players.add(player);
-    }
-
-    public void removePlayer(Player player) {
-        players.remove(player);
-    }
-
-    public void addCoach(Coach coach) {
-        if (coach == null)
-            throw new IllegalArgumentException("Coach cannot be null.");
-        if (coaches.size() >= 2)
-            throw new IllegalArgumentException("A team can have at most 2 coaches.");
-        coaches.add(coach);
-    }
-
-    public void removeCoach(Coach coach) {
-        coaches.remove(coach);
+    public Team() {
+        // Must NOT add to extent
+        this.players = new ArrayList<>();
+        this.coaches = new ArrayList<>();
     }
 
     public void setName(String name) {
@@ -78,8 +64,21 @@ public class Team {
 
     private static List<Team> extent = new ArrayList<>();
 
-    public static List<Team> getExtent() { return new ArrayList<>(extent); }
-    public static void clearExtent() { extent.clear(); }
-    public static boolean saveExtent() { return ExtentPersistence.saveExtent(Team.class, extent); }
-    public static void loadExtent() { extent = ExtentPersistence.loadExtent(Team.class); }
+    public static List<Team> getExtent() {
+        return new ArrayList<>(extent);
+    }
+
+    public static void clearExtent() {
+        extent.clear();
+    }
+
+    public static boolean saveExtent() {
+        return ExtentPersistence.saveExtent(Team.class, extent);
+    }
+
+    public static void loadExtent() {
+        List<Team> loaded = ExtentPersistence.loadExtent(Team.class);
+        extent.clear();
+        extent.addAll(loaded);
+    }
 }

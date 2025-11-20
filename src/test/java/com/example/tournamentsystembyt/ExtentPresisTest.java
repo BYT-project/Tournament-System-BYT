@@ -17,7 +17,7 @@ package com.example.tournamentsystembyt;
             Team.clearExtent();
             Files.deleteIfExists(Path.of("Team_extent.json"));
         }
-    
+
         @Test
         public void testConstructorAddsToExtent() {
             assertEquals(0, Team.getExtent().size());
