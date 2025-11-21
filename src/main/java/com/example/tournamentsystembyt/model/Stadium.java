@@ -3,12 +3,40 @@ package com.example.tournamentsystembyt.model;
 import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
 import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
+import com.example.tournamentsystembyt.helpers.ExtentPersistence;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Stadium {
 
-    private final String name;
+    private  String name;
     private int capacity;
     private String location;
+    private static final List<Stadium> extent = new ArrayList<>();
+
+    private static void addStadium(Stadium s) {
+        if (s == null) throw new IllegalArgumentException("Stadium cannot be null");
+        extent.add(s);
+    }
+
+    public static List<Stadium> getExtent() {
+        return new ArrayList<>(extent); // encapsulation: return defensive copy
+    }
+
+    public static void clearExtent() {
+        extent.clear();
+    }
+
+    public static boolean saveExtent() {
+        return ExtentPersistence.saveExtent(Stadium.class, extent);
+    }
+
+    public static void loadExtent() {
+        List<Stadium> loaded = ExtentPersistence.loadExtent(Stadium.class);
+        extent.clear();
+        extent.addAll(loaded);
+    }
 
     public Stadium(String name, int capacity, String location) {
         validateName(name);
@@ -18,6 +46,9 @@ public class Stadium {
         this.name = name.trim();
         this.capacity = capacity;
         this.location = location.trim();
+        addStadium(this);
+    }
+    public Stadium(){
     }
 
     private void validateName(String name) {

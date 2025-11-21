@@ -3,6 +3,10 @@ package com.example.tournamentsystembyt.model;
 import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
 import com.example.tournamentsystembyt.exceptions.InvalidEmailException;
+import com.example.tournamentsystembyt.helpers.ExtentPersistence;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MediaPartner {
 
@@ -10,10 +14,40 @@ public class MediaPartner {
     private String email;
     private String type;
 
+    private static final List<MediaPartner> extent = new ArrayList<>();
+
+    private static void addMediaPartner(MediaPartner mp) {
+        if (mp == null) {
+            throw new IllegalArgumentException("MediaPartner cannot be null");
+        }
+        extent.add(mp);
+    }
+
+    public static List<MediaPartner> getExtent() {
+        return new ArrayList<>(extent); // encapsulated copy
+    }
+
+    public static void clearExtent() {
+        extent.clear();
+    }
+
+    public static boolean saveExtent() {
+        return ExtentPersistence.saveExtent(MediaPartner.class, extent);
+    }
+
+    public static void loadExtent() {
+        List<MediaPartner> loaded = ExtentPersistence.loadExtent(MediaPartner.class);
+        extent.clear();
+        extent.addAll(loaded);
+    }
+
     public MediaPartner(String name, String email, String type) {
         setName(name);
         setEmail(email);
         setType(type);
+        addMediaPartner(this);
+    }
+    public MediaPartner() {
     }
 
     public void setName(String name) {

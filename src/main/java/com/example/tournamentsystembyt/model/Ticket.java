@@ -3,6 +3,10 @@ package com.example.tournamentsystembyt.model;
 import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
 import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
+import com.example.tournamentsystembyt.helpers.ExtentPersistence;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Ticket {
 
@@ -11,6 +15,33 @@ public class Ticket {
     private String type;
     private String status;
 
+    private static final List<Ticket> extent = new ArrayList<>();
+
+    private static void addTicket(Ticket t) {
+        if (t == null) {
+            throw new IllegalArgumentException("Ticket cannot be null");
+        }
+        extent.add(t);
+    }
+
+    public static List<TournamentTicket> getExtent() {
+        return new ArrayList<>(extent); // defensive copy
+    }
+
+    public static void clearExtent() {
+        extent.clear();
+    }
+
+    public static boolean saveExtent() {
+        return ExtentPersistence.saveExtent(Ticket.class, extent);
+    }
+
+    public static void loadExtent() {
+        List<Ticket> loaded = ExtentPersistence.loadExtent(Ticket.class);
+        extent.clear();
+        extent.addAll(loaded);
+    }
+
     public static final double TAX_FEE = 0.05; // 5% tax
 
     public Ticket(String id, double price, String type, String status) {
@@ -18,6 +49,9 @@ public class Ticket {
         setPrice(price);
         setType(type);
         setStatus(status);
+        addTicket(this);
+    }
+    public Ticket() {
     }
 
     private void validateId(String id) {

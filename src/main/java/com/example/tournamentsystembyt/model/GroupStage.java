@@ -2,11 +2,41 @@ package com.example.tournamentsystembyt.model;
 
 import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
+import com.example.tournamentsystembyt.helpers.ExtentPersistence;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GroupStage extends Stage {
 
     private int numberOfGroups;
     private int teamsPerGroup;
+
+    private static final List<GroupStage> extent = new ArrayList<>();
+    private static void addStage(GroupStage gs) {
+        if (gs == null) {
+            throw new IllegalArgumentException("GroupStage cannot be null");
+        }
+        extent.add(gs);
+    }
+
+    public static List<GroupStage> getExtent() {
+        return new ArrayList<>(extent); // encapsulation
+    }
+
+    public static void clearExtent() {
+        extent.clear();
+    }
+
+    public static boolean saveExtent() {
+        return ExtentPersistence.saveExtent(GroupStage.class, extent);
+    }
+
+    public static void loadExtent() {
+        List<GroupStage> loaded = ExtentPersistence.loadExtent(GroupStage.class);
+        extent.clear();
+        extent.addAll(loaded); // load back
+    }
 
     public GroupStage(int id,
                       String stageName,
@@ -16,6 +46,10 @@ public class GroupStage extends Stage {
         super(id, stageName);
         setNumberOfGroups(numberOfGroups);
         setTeamsPerGroup(teamsPerGroup);
+        addStage(this);
+    }
+    public GroupStage(){
+       super();
     }
 
     public void setNumberOfGroups(int numberOfGroups) {

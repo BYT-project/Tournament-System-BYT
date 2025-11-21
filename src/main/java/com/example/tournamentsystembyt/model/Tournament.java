@@ -5,6 +5,7 @@ import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
 import com.example.tournamentsystembyt.exceptions.NullObjectException;
 import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
+import com.example.tournamentsystembyt.helpers.ExtentPersistence;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,6 +26,32 @@ public class Tournament {
     private final List<MediaPartner> mediaPartners;
     private final List<Stage> stages;
     private final List<Team> teams;
+    private static final List<Tournament> extent = new ArrayList<>();
+
+    private static void addTournament(Tournament t) {
+        if (t == null) {
+            throw new IllegalArgumentException("Tournament cannot be null");
+        }
+        extent.add(t);
+    }
+
+    public static List<Tournament> getExtent() {
+        return new ArrayList<>(extent); // defensive copy
+    }
+
+    public static void clearExtent() {
+        extent.clear();
+    }
+
+    public static boolean saveExtent() {
+        return ExtentPersistence.saveExtent(Tournament.class, extent);
+    }
+
+    public static void loadExtent() {
+        List<Tournament> loaded = ExtentPersistence.loadExtent(Tournament.class);
+        extent.clear();
+        extent.addAll(loaded);
+    }
 
     public Tournament(String name,
                       String sportType,
@@ -38,6 +65,12 @@ public class Tournament {
         setEndDate(endDate);
         setPrizePool(prizePool);
 
+        this.mediaPartners = new ArrayList<>();
+        this.stages = new ArrayList<>();
+        this.teams = new ArrayList<>();
+        addTournament(this);
+    }
+    public Tournament() {
         this.mediaPartners = new ArrayList<>();
         this.stages = new ArrayList<>();
         this.teams = new ArrayList<>();
