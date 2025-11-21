@@ -1,5 +1,7 @@
 package com.example.tournamentsystembyt;
 
+import com.example.tournamentsystembyt.exceptions.InvalidValueException;
+import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
 import com.example.tournamentsystembyt.model.Player;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +19,7 @@ class PlayerTest {
 
     @Test
     void rejectsNonPositiveHeight() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidValueException.class,
                 () -> new Player("Max", "Power",
                         LocalDate.now().minusYears(25), "max@mail.com", "123",
                         0, 75, "Midfielder", 10));
@@ -25,7 +27,7 @@ class PlayerTest {
 
     @Test
     void rejectsNonPositiveWeight() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidValueException.class,
                 () -> new Player("Max", "Power",
                         LocalDate.now().minusYears(25), "max@mail.com", "123",
                         180, -5, "Midfielder", 10));
@@ -33,7 +35,7 @@ class PlayerTest {
 
     @Test
     void rejectsEmptyPosition() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidValueException.class,
                 () -> new Player("Max", "Power",
                         LocalDate.now().minusYears(25), "max@mail.com", "123",
                         180, 75, " ", 10));
@@ -41,7 +43,7 @@ class PlayerTest {
 
     @Test
     void rejectsNonPositiveShirtNumber() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidValueException.class,
                 () -> new Player("Max", "Power",
                         LocalDate.now().minusYears(25), "max@mail.com", "123",
                         180, 75, "Midfielder", 0));

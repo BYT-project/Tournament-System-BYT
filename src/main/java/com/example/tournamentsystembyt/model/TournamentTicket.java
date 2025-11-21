@@ -20,7 +20,7 @@ public class TournamentTicket extends Ticket {
         extent.add(t);
     }
 
-    public static List<TournamentTicket> getExtent() {
+    public static List<Ticket> getExtent() {
         return new ArrayList<>(extent); // defensive copy
     }
 
