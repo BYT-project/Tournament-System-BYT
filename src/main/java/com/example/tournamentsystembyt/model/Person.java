@@ -29,6 +29,10 @@ public abstract class Person {
         setEmail(email);
         setPhone(phone);
     }
+    protected Person(){
+
+
+    }
 
     // Derived attribute
     public int getAge() {

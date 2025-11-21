@@ -22,6 +22,9 @@ public abstract class Stage {
         this.isCompleted = false;
         this.matches = new ArrayList<>();
     }
+    public Stage() {
+        this.matches = new ArrayList<>();
+    }
 
     public void seedTeams() {
         // Will be implemented later

@@ -3,14 +3,44 @@ package com.example.tournamentsystembyt.model;
 import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
 import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
+import com.example.tournamentsystembyt.helpers.ExtentPersistence;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Player extends Person {
     private double height;   // meters
     private double weight;   // kilograms
     private String position;
     private int shirtNum;
+
+    private static final List<Player> extent = new ArrayList<>();
+
+    private static void addPlayer(Player p) {
+        if (p == null) {
+            throw new IllegalArgumentException("Player cannot be null");
+        }
+        extent.add(p);
+    }
+
+    public static List<Player> getExtent() {
+        return new ArrayList<>(extent); // defensive copy for encapsulation
+    }
+
+    public static void clearExtent() {
+        extent.clear();
+    }
+
+    public static boolean saveExtent() {
+        return ExtentPersistence.saveExtent(Player.class, extent);
+    }
+
+    public static void loadExtent() {
+        List<Player> loaded = ExtentPersistence.loadExtent(Player.class);
+        extent.clear();
+        extent.addAll(loaded);
+    }
 
     public Player(String firstName,
                   String lastName,
@@ -26,6 +56,10 @@ public class Player extends Person {
         setWeight(weight);
         setPosition(position);
         setShirtNum(shirtNum);
+        addPlayer(this);
+    }
+    public Player(){
+        super();
     }
 
     public void setHeight(double height) {

@@ -5,9 +5,12 @@ import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
 import com.example.tournamentsystembyt.exceptions.NullObjectException;
 import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
+import com.example.tournamentsystembyt.helpers.ExtentPersistence;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Match {
 
@@ -19,6 +22,32 @@ public class Match {
     private Integer winnerTeamId;   // nullable until match ends
 
     private Stage stage;
+    private static final List<Match> extent = new ArrayList<>();
+    private static void addMatch(Match match) {
+        if (match == null) {
+            throw new IllegalArgumentException("Match cannot be null");
+        }
+        extent.add(match);
+    }
+
+    public static List<Match> getExtent() {
+        // encapsulation – defensive copy
+        return new ArrayList<>(extent);
+    }
+
+    public static void clearExtent() {
+        extent.clear();
+    }
+
+    public static boolean saveExtent() {
+        return ExtentPersistence.saveExtent(Match.class, extent);
+    }
+
+    public static void loadExtent() {
+        List<Match> loaded = ExtentPersistence.loadExtent(Match.class);
+        extent.clear();
+        extent.addAll(loaded);
+    }
 
     public Match(LocalDate startDate,
                  LocalTime startTime,
@@ -33,6 +62,10 @@ public class Match {
         this.homeScore = null;
         this.awayScore = null;
         this.winnerTeamId = null;
+        addMatch(this);
+    }
+    public Match() {
+        // Default constructor
     }
 
     public void assignReferee() {

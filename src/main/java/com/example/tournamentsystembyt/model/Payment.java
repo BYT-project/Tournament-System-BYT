@@ -4,16 +4,45 @@ import com.example.tournamentsystembyt.exceptions.InvalidStateException;
 import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
 import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
+import com.example.tournamentsystembyt.helpers.ExtentPersistence;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Payment {
 
-    private final String id;
+    private  String id;
     private String method;
     private double amount;
     private LocalDate paidAt;
 
+    private static final List<Payment> extent = new ArrayList<>();
+
+    private static void addPayment(Payment p) {
+        if (p == null) {
+            throw new IllegalArgumentException("Payment cannot be null");
+        }
+        extent.add(p);
+    }
+
+    public static List<Payment> getExtent() {
+        return new ArrayList<>(extent); // defensive copy
+    }
+
+    public static void clearExtent() {
+        extent.clear();
+    }
+
+    public static boolean saveExtent() {
+        return ExtentPersistence.saveExtent(Payment.class, extent);
+    }
+
+    public static void loadExtent() {
+        List<Payment> loaded = ExtentPersistence.loadExtent(Payment.class);
+        extent.clear();
+        extent.addAll(loaded);
+    }
     public Payment(String id, String method, double amount) {
         if (id == null || id.trim().isEmpty()) {
             throw new NullOrEmptyStringException("Payment ID");
@@ -22,6 +51,9 @@ public class Payment {
 
         setMethod(method);
         setAmount(amount);
+        addPayment(this);
+    }
+    public Payment(){
     }
 
     public String getMethod() {
@@ -31,7 +63,7 @@ public class Payment {
     public double getAmount() {
         return amount;
     }
-
+    public String getId() { return id; }
     public LocalDate getPaidAt() {
         return paidAt;
     }

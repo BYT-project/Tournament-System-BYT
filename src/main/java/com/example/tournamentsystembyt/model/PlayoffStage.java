@@ -3,11 +3,42 @@ package com.example.tournamentsystembyt.model;
 import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
 import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
+import com.example.tournamentsystembyt.helpers.ExtentPersistence;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlayoffStage extends Stage {
 
     private int numberOfRounds;
     private String matchType;
+
+    private static final List<PlayoffStage> extent = new ArrayList<>();
+
+    private static void addPlayoffStage(PlayoffStage ps) {
+        if (ps == null) {
+            throw new IllegalArgumentException("PlayoffStage cannot be null");
+        }
+        extent.add(ps);
+    }
+
+    public static List<PlayoffStage> getExtent() {
+        return new ArrayList<>(extent); // defensive copy
+    }
+
+    public static void clearExtent() {
+        extent.clear();
+    }
+
+    public static boolean saveExtent() {
+        return ExtentPersistence.saveExtent(PlayoffStage.class, extent);
+    }
+
+    public static void loadExtent() {
+        List<PlayoffStage> loaded = ExtentPersistence.loadExtent(PlayoffStage.class);
+        extent.clear();
+        extent.addAll(loaded);
+    }
 
     public PlayoffStage(int id,
                         String stageName,
@@ -17,6 +48,10 @@ public class PlayoffStage extends Stage {
         super(id, stageName);
         setNumberOfRounds(numberOfRounds);
         setMatchType(matchType);
+        addPlayoffStage(this);
+    }
+    public PlayoffStage(){
+       super();
     }
 
     public void setNumberOfRounds(int numberOfRounds) {

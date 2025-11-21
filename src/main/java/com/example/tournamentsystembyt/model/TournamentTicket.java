@@ -3,11 +3,40 @@ package com.example.tournamentsystembyt.model;
 import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
 import com.example.tournamentsystembyt.exceptions.NullObjectException;
+import com.example.tournamentsystembyt.helpers.ExtentPersistence;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TournamentTicket extends Ticket {
 
     private Stadium stadium;
     private Integer seatNumber; // 0..1 (optional)
+
+    private static final List<TournamentTicket> extent = new ArrayList<>();
+
+    private static void addTournamentTicket(TournamentTicket t) {
+        if (t == null) throw new IllegalArgumentException("TournamentTicket cannot be null");
+        extent.add(t);
+    }
+
+    public static List<TournamentTicket> getExtent() {
+        return new ArrayList<>(extent); // defensive copy
+    }
+
+    public static void clearExtent() {
+        extent.clear();
+    }
+
+    public static boolean saveExtent() {
+        return ExtentPersistence.saveExtent(TournamentTicket.class, extent);
+    }
+
+    public static void loadExtent() {
+        List<TournamentTicket> loaded = ExtentPersistence.loadExtent(TournamentTicket.class);
+        extent.clear();
+        extent.addAll(loaded);
+    }
 
     public TournamentTicket(String id,
                             double price,
@@ -19,6 +48,11 @@ public class TournamentTicket extends Ticket {
 
         setStadium(stadium);
         setSeatNumber(seatNumber); // may be null
+        addTournamentTicket(this);
+    }
+
+    public TournamentTicket() {
+        super();
     }
 
     private void validateSeatNumber(Integer seatNumber) {

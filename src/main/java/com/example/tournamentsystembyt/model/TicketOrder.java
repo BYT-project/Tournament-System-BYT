@@ -5,6 +5,7 @@ import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
 import com.example.tournamentsystembyt.exceptions.NullObjectException;
 import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
+import com.example.tournamentsystembyt.helpers.ExtentPersistence;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,15 +14,37 @@ import java.util.List;
 
 public class TicketOrder {
 
-    private final String id;
-    private final LocalDate createdAt;
+    private  String id;
+    private  LocalDate createdAt;
     private double amount;
     private String status;
-    private final List<Ticket> tickets = new ArrayList<>();
+    private List<Ticket> tickets = new ArrayList<>();
     private Payment payment;
 
-    private static final List<TicketOrder> EXTENT = new ArrayList<>();
+    private static final List<TicketOrder> extent = new ArrayList<>();
 
+    private static void addTicketOrder(TicketOrder o) {
+        if (o == null) throw new IllegalArgumentException("TicketOrder cannot be null");
+        extent.add(o);
+    }
+
+    public static List<TicketOrder> getExtent() {
+        return new ArrayList<>(extent); // defensive copy
+    }
+
+    public static void clearExtent() {
+        extent.clear();
+    }
+
+    public static boolean saveExtent() {
+        return ExtentPersistence.saveExtent(TicketOrder.class, extent);
+    }
+
+    public static void loadExtent() {
+        List<TicketOrder> loaded = ExtentPersistence.loadExtent(TicketOrder.class);
+        extent.clear();
+        extent.addAll(loaded);
+    }
     public TicketOrder(String id) {
         if (id == null || id.trim().isEmpty()) {
             throw new NullOrEmptyStringException("Order ID");
@@ -30,7 +53,10 @@ public class TicketOrder {
         this.createdAt = LocalDate.now();
         this.amount = 0.0;
         this.status = "PENDING";
-        EXTENT.add(this);
+        addTicketOrder(this);
+    }
+    public TicketOrder() {
+       this.tickets = new ArrayList<>();
     }
 
     public LocalDate getCreatedAt() {
@@ -130,18 +156,5 @@ public class TicketOrder {
             throw new InvalidStateException("Cannot cancel a paid ticket order.");
         }
         this.status = "CANCELLED";
-    }
-
-    public static List<TicketOrder> getExtent() {
-        return Collections.unmodifiableList(new ArrayList<>(EXTENT));
-    }
-
-    public static void checkPendingOrders() {
-        for (TicketOrder order : EXTENT) {
-            if ("PENDING".equals(order.status)) {
-                System.out.println("Pending order found: " + order.id +
-                        " created at " + order.createdAt);
-            }
-        }
     }
 }

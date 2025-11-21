@@ -4,6 +4,7 @@ import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
 import com.example.tournamentsystembyt.exceptions.NullObjectException;
 import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
+import com.example.tournamentsystembyt.helpers.ExtentPersistence;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,6 +16,36 @@ public class Coach extends Person {
     private int experience; // in years
     private final List<Team> teamsCoached;     // multi-valued attribute
 
+    private static final List<Coach> extent = new ArrayList<>();
+
+
+    private static void addCoach(Coach coach) {
+        if (coach == null) {
+            throw new NullObjectException("Coach");
+        }
+        extent.add(coach);
+    }
+
+    public static List<Coach> getExtent() {
+        return new ArrayList<>(extent); // encapsulation
+    }
+
+    public static void clearExtent() {
+        extent.clear();
+    }
+
+    public static boolean saveExtent() {
+        return ExtentPersistence.saveExtent(Coach.class, extent);
+    }
+
+    public static void loadExtent() {
+        List<Coach> loaded = ExtentPersistence.loadExtent(Coach.class);
+        extent.clear();
+        for (Coach c : loaded) {
+            addCoach(c);
+        }
+    }
+
     public Coach(String firstName,
                  String lastName,
                  LocalDate dateOfBirth,
@@ -25,6 +56,11 @@ public class Coach extends Person {
         super(firstName, lastName, dateOfBirth, email, phone);
         setRole(role);
         setExperience(experience);
+        this.teamsCoached = new ArrayList<>();
+        addCoach(this);
+    }
+    public Coach() {
+        super();
         this.teamsCoached = new ArrayList<>();
     }
 
