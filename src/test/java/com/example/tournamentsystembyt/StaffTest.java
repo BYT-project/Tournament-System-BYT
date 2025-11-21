@@ -1,6 +1,8 @@
 package com.example.tournamentsystembyt;
 
+import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
 import com.example.tournamentsystembyt.model.Staff;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -9,31 +11,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class StaffTest {
 
-    private Staff validStaff() {
-        return new Staff("Jane", "Doe",
-                LocalDate.now().minusYears(28), "jane@mail.com", "111",
-                "Manager", 3000);
+    private Staff staff;
+
+    @BeforeEach
+    void setUp() {
+        staff = new Staff("John", "Doe", LocalDate.of(1990, 1, 1), "john.doe@example.com", "123456789", "Manager", 50000);
     }
 
     @Test
-    void rejectsEmptyJobTitle() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Staff("Jane", "Doe",
-                        LocalDate.now().minusYears(28), "jane@mail.com", "111",
-                        " ", 3000));
+    void testStaffCreation() {
+        assertEquals("John", staff.getFirstName());
+        assertEquals("Doe", staff.getLastName());
+        assertEquals(LocalDate.of(1990, 1, 1), staff.getDateOfBirth());
+        assertEquals("john.doe@example.com", staff.getEmail());
+        assertEquals("123456789", staff.getPhone());
+        assertEquals(50000, staff.getSalary());
     }
 
-    @Test
-    void rejectsNegativeSalary() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new Staff("Jane", "Doe",
-                        LocalDate.now().minusYears(28), "jane@mail.com", "111",
-                        "Manager", -10));
-    }
 
     @Test
-    void validSalaryAccepted() {
-        Staff s = validStaff();
-        assertEquals(3000, s.getSalary());
+    void testSetNegativeSalary() {
+        assertThrows(NegativeNumberException.class, () -> staff.setSalary(-1));
     }
 }

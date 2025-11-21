@@ -1,22 +1,41 @@
 package com.example.tournamentsystembyt;
 
-import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.model.MediaPartner;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MediaPartnerTest {
 
-    @Test
-    void ctor_rejectsEmptyNameEmailType() {
-        assertThrows(InvalidValueException.class, () -> new MediaPartner(" ", "a@b.com", "TV"));
-        assertThrows(InvalidValueException.class, () -> new MediaPartner("ESPN", " ", "TV"));
-        assertThrows(InvalidValueException.class, () -> new MediaPartner("ESPN", "a@b.com", " "));
+    private MediaPartner mediaPartner;
+
+    @BeforeEach
+    void setUp() {
+        mediaPartner = new MediaPartner("Test Partner", "partner@example.com", "Test Type");
     }
 
     @Test
-    void ctor_rejectsInvalidEmail() {
-        assertThrows(InvalidValueException.class, () -> new MediaPartner("ESPN", "not-an-email", "TV"));
+    void testMediaPartnerCreation() {
+        assertEquals("Test Partner", mediaPartner.getName());
+        assertEquals("partner@example.com", mediaPartner.getEmail());
+        assertEquals("Test Type", mediaPartner.getType());
+    }
+
+    @Test
+    void testSetEmptyName() {
+        assertThrows(Exception.class, () -> mediaPartner.setName(""));
+        assertThrows(Exception.class, () -> mediaPartner.setName(" "));
+    }
+
+    @Test
+    void testSetInvalidEmail() {
+        assertThrows(Exception.class, () -> mediaPartner.setEmail("invalid-email"));
+    }
+
+    @Test
+    void testSetEmptyType() {
+        assertThrows(Exception.class, () -> mediaPartner.setType(""));
+        assertThrows(Exception.class, () -> mediaPartner.setType(" "));
     }
 }

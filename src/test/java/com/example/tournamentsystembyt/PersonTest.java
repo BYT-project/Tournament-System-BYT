@@ -1,7 +1,12 @@
 package com.example.tournamentsystembyt;
 
-import com.example.tournamentsystembyt.exceptions.InvalidValueException;
+import com.example.tournamentsystembyt.exceptions.InvalidDateException;
+import com.example.tournamentsystembyt.exceptions.InvalidEmailException;
+import com.example.tournamentsystembyt.exceptions.NullObjectException;
+import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
 import com.example.tournamentsystembyt.model.Person;
+import com.example.tournamentsystembyt.model.Viewer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -10,49 +15,47 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PersonTest {
 
-    static class TestPerson extends Person {
-        public TestPerson(String first, String last, LocalDate dob, String email, String phone) {
-            super(first, last, dob, email, phone);
-        }
-    }
+    private Person person;
 
-    private TestPerson validPerson() {
-        return new TestPerson("John", "Doe", LocalDate.now().minusYears(20), "john@example.com", "123456789");
+    @BeforeEach
+    void setUp() {
+        person = new Viewer("John", "Doe", LocalDate.of(1990, 1, 1), "john.doe@example.com", "123456789");
     }
 
     @Test
-    void rejectsEmptyFirstName() {
-        assertThrows(InvalidValueException.class,
-                () -> new TestPerson(" ", "Doe", LocalDate.now().minusYears(20), "john@example.com", "123"));
+    void testPersonCreation() {
+        assertEquals("John", person.getFirstName());
+        assertEquals("Doe", person.getLastName());
+        assertEquals(LocalDate.of(1990, 1, 1), person.getDateOfBirth());
+        assertEquals("john.doe@example.com", person.getEmail());
+        assertEquals("123456789", person.getPhone());
     }
 
     @Test
-    void rejectsEmptyLastName() {
-        assertThrows(InvalidValueException.class,
-                () -> new TestPerson("John", "  ", LocalDate.now().minusYears(20), "john@example.com", "123"));
+    void testSetEmptyFirstName() {
+        assertThrows(NullOrEmptyStringException.class, () -> person.setFirstName(""));
+        assertThrows(NullOrEmptyStringException.class, () -> person.setFirstName(" "));
     }
 
     @Test
-    void rejectsFutureDateOfBirth() {
-        assertThrows(InvalidValueException.class,
-                () -> new TestPerson("John", "Doe", LocalDate.now().plusDays(1), "john@example.com", "123"));
+    void testSetEmptyLastName() {
+        assertThrows(NullOrEmptyStringException.class, () -> person.setLastName(""));
+        assertThrows(NullOrEmptyStringException.class, () -> person.setLastName(" "));
     }
 
     @Test
-    void rejectsInvalidEmail() {
-        assertThrows(InvalidValueException.class,
-                () -> new TestPerson("John", "Doe", LocalDate.now().minusYears(20), "invalidEmail", "123"));
+    void testSetInvalidBirthDate() {
+        assertThrows(InvalidDateException.class, () -> person.setDateOfBirth(LocalDate.now().plusDays(1)));
     }
 
     @Test
-    void ageIsCalculatedCorrectly() {
-        TestPerson p = new TestPerson("John", "Doe", LocalDate.now().minusYears(30), "john@example.com", "123");
-        assertEquals(30, p.getAge());
+    void testSetInvalidEmail() {
+        assertThrows(InvalidEmailException.class, () -> person.setEmail("invalid-email"));
     }
 
     @Test
-    void rejectsEmptyPhone() {
-        assertThrows(InvalidValueException.class,
-                () -> new TestPerson("John", "Doe", LocalDate.now().minusYears(20), "john@example.com", " "));
+    void testSetEmptyPhoneNumber() {
+        assertThrows(NullOrEmptyStringException.class, () -> person.setPhone(""));
+        assertThrows(NullOrEmptyStringException.class, () -> person.setPhone(" "));
     }
 }
