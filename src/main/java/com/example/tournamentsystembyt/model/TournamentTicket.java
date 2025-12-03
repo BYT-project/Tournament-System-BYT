@@ -71,7 +71,7 @@ public class TournamentTicket extends Ticket {
         return stadium;
     }
 
-    public Integer getSeatNumber() {
+    public int getSeatNumber() {
         return seatNumber;
     }
 
