@@ -6,8 +6,8 @@ import com.example.tournamentsystembyt.exceptions.NullObjectException;
 
 public class MatchTicket extends Ticket {
 
-    private final Stadium stadium;
-    private final int seatNumber;
+    private  Stadium stadium;
+    private  int seatNumber;
 
     public MatchTicket(String id,
                        double price,
@@ -36,6 +36,31 @@ public class MatchTicket extends Ticket {
             );
         }
     }
+
+
+    //Qualified association
+    public void setSeatNumber(int seatNumber) {
+        if (seatNumber <= 0) {
+            throw new IllegalArgumentException("Seat number must be positive");
+        }
+
+
+        if (stadium != null) {
+            throw new IllegalStateException(
+                    "Cannot change seat number while ticket is assigned to a stadium. " +
+                            "Remove it from the stadium first."
+            );
+        }
+
+        this.seatNumber = seatNumber;
+    }
+
+
+    void setStadiumInternal(Stadium newStadium) {
+        this.stadium = newStadium;
+    }
+
+
 
     public Stadium getStadium() {
         return stadium;

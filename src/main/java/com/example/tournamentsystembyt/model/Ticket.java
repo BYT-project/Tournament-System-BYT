@@ -15,8 +15,6 @@ public class Ticket {
     private String type;
     private String status;
 
-    private Stadium stadium;
-    private int seatNumber;
 
     private static final List<Ticket> extent = new ArrayList<>();
 
@@ -114,24 +112,6 @@ public class Ticket {
         this.status = status.trim().toUpperCase();
     }
 
-    public void setSeatNumber(int seatNumber) {
-        if (seatNumber <= 0) {
-            throw new IllegalArgumentException("Seat number must be positive");
-        }
-
-        if (stadium != null) {
-            throw new IllegalStateException(
-                    "Cannot change seat number while ticket is assigned to a stadium. " +
-                            "Remove it from the stadium first."
-            );
-        }
-
-        this.seatNumber = seatNumber;
-    }
-
-    void setStadiumInternal(Stadium newStadium) {
-        this.stadium = newStadium;
-    }
 
     public String getId() {
         return id;
@@ -149,13 +129,7 @@ public class Ticket {
         return status;
     }
 
-    public Stadium getStadium() {
-        return stadium;
-    }
 
-    public int getSeatNumber() {
-        return seatNumber;
-    }
 
     public double calculateTotalPrice() {
         return price + (price * TAX_FEE);

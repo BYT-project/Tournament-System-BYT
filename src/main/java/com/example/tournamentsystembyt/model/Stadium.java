@@ -14,6 +14,7 @@ public class Stadium {
     private String location;
     private static final List<Stadium> extent = new ArrayList<>();
 
+    //Qualified association
     private final Map<Integer, MatchTicket> ticketsBySeat = new HashMap<>();
 
 
@@ -89,26 +90,28 @@ public class Stadium {
         }
     }
 
+
+    //Qualified association
     public void addMatchTicket(MatchTicket ticket) {
         if (ticket == null) {
-            throw new IllegalArgumentException("Ticket cannot be null");
+            throw new InvalidValueException("Ticket cannot be null");
         }
 
         int seatNumber = ticket.getSeatNumber();
         if (seatNumber <= 0) {
-            throw new IllegalArgumentException("Seat number must be positive");
+            throw new InvalidValueException("Seat number must be positive");
         }
 
         if (seatNumber > this.getCapacity()) {
-            throw new IllegalArgumentException("Seat number exceeds stadium capacity");
+            throw new InvalidValueException("Seat number exceeds stadium capacity");
         }
 
         if (ticketsBySeat.containsKey(seatNumber)) {
-            throw new IllegalArgumentException("Seat " + seatNumber + " is already taken in this stadium");
+            throw new InvalidValueException("Seat " + seatNumber + " is already taken in this stadium");
         }
 
         if (ticket.getStadium() != null && ticket.getStadium() != this) {
-            throw new IllegalArgumentException("Ticket already belongs to another stadium");
+            throw new InvalidValueException("Ticket already belongs to another stadium");
         }
 
         ticketsBySeat.put(seatNumber, ticket);
@@ -121,7 +124,7 @@ public class Stadium {
     public void removeMatchTicket(int seatNumber) {
         MatchTicket ticket = ticketsBySeat.get(seatNumber);
         if (ticket == null) {
-            throw new IllegalArgumentException("No ticket found at seat " + seatNumber + " in this stadium");
+            throw new InvalidValueException("No ticket found at seat " + seatNumber + " in this stadium");
         }
 
         ticketsBySeat.remove(seatNumber);
