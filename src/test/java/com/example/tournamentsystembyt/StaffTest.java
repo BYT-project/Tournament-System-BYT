@@ -1,5 +1,6 @@
 package com.example.tournamentsystembyt;
 
+import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
 import com.example.tournamentsystembyt.model.Staff;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,10 +13,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class StaffTest {
 
     private Staff staff;
+    private Staff staff2;
+    private Staff staff3;
 
     @BeforeEach
     void setUp() {
         staff = new Staff("John", "Doe", LocalDate.of(1990, 1, 1), "john.doe@example.com", "123456789", "Manager", 50000);
+        staff2 = new Staff("Alice", "Smith", LocalDate.of(1985, 5, 15),  "alice@example.com", "987654321", "Coach", 60000);
+        staff3 = new Staff("Tim", "Lox", LocalDate.of(2005, 5, 15),  "alice2@example.com", "98222221", "Manager", 60000);
+
     }
 
     @Test
@@ -27,10 +33,65 @@ class StaffTest {
         assertEquals("123456789", staff.getPhone());
         assertEquals(50000, staff.getSalary());
     }
-
-
     @Test
     void testSetNegativeSalary() {
         assertThrows(NegativeNumberException.class, () -> staff.setSalary(-1));
+    }
+    @Test
+    void testAssignSupervisorCreatesBidirectionalLink() {
+        staff2.setSupervisor(staff);
+
+        assertEquals(staff, staff2.getSupervisor());
+        assertTrue(staff.getSupervisees().contains(staff2));
+    }
+
+    @Test
+    void testChangeSupervisorUpdatesBothSides() {
+        staff2.setSupervisor(staff);
+        staff2.setSupervisor(staff3); // reassignment
+
+        assertEquals(staff3, staff2.getSupervisor());
+        assertFalse(staff.getSupervisees().contains(staff2));
+        assertTrue(staff3.getSupervisees().contains(staff2));
+    }
+
+    @Test
+    void testAddSuperviseeUpdatesBothSides() {
+        staff.addSupervisee(staff2);
+
+        assertEquals(staff, staff2.getSupervisor());
+        assertTrue(staff.getSupervisees().contains(staff2));
+    }
+
+    @Test
+    void testAddDuplicateSuperviseeThrowsException() {
+        staff.addSupervisee(staff2);
+        assertThrows(InvalidValueException.class,
+                () -> staff.addSupervisee(staff2),
+                "Adding the same supervisee twice must throw an exception");
+    }
+
+    @Test
+    void testCannotSuperviseSelf() {
+        assertThrows(IllegalArgumentException.class,
+                () -> staff.setSupervisor(staff));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> staff.addSupervisee(staff));
+    }
+
+    @Test
+    void testRemoveSuperviseeUpdatesBothSides() {
+        staff.addSupervisee(staff2);
+        staff.removeSupervisee(staff2);
+
+        assertNull(staff2.getSupervisor());
+        assertFalse(staff.getSupervisees().contains(staff2));
+    }
+
+    @Test
+    void testRemovingNonExistingSuperviseeThrows() {
+        assertThrows(InvalidValueException.class,
+                () -> staff.removeSupervisee(staff2));
     }
 }
