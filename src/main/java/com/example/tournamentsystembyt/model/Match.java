@@ -165,7 +165,25 @@ public class Match {
         if (stage == null) {
             throw new NullObjectException("Stage");
         }
+        if (this.stage == stage) {
+            return;
+        }
+        // remove from old stage
+        if (this.stage != null) {
+            this.stage.internalRemoveMatch(this);
+        }
         this.stage = stage;
+        stage.internalAddMatch(this);
+    }
+
+    // NEW – used from Stage.delete()
+    public void delete() {
+        if (stage != null) {
+            Stage oldStage = stage;
+            stage = null;
+            oldStage.internalRemoveMatch(this);
+        }
+        extent.remove(this);
     }
 
     public LocalDate getStartDate() {

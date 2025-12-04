@@ -26,6 +26,7 @@ public class Tournament {
     private final List<MediaPartner> mediaPartners;
     private final List<Stage> stages;
     private final List<Team> teams;
+    private final List<TournamentTicket> tournamentTickets;
     private static final List<Tournament> extent = new ArrayList<>();
 
     private static void addTournament(Tournament t) {
@@ -68,12 +69,37 @@ public class Tournament {
         this.mediaPartners = new ArrayList<>();
         this.stages = new ArrayList<>();
         this.teams = new ArrayList<>();
+        this.tournamentTickets = new ArrayList<>();
         addTournament(this);
     }
+
     public Tournament() {
         this.mediaPartners = new ArrayList<>();
         this.stages = new ArrayList<>();
         this.teams = new ArrayList<>();
+        this.tournamentTickets = new ArrayList<>();
+    }
+
+    // NEW – package-private so only model classes use them
+    void internalAddStage(Stage stage) {
+        if (!stages.contains(stage)) {
+            stages.add(stage);
+        }
+    }
+
+    void internalRemoveStage(Stage stage) {
+        stages.remove(stage);
+    }
+
+    // NEW for TournamentTicket composition
+    void internalAddTournamentTicket(TournamentTicket ticket) {
+        if (!tournamentTickets.contains(ticket)) {
+            tournamentTickets.add(ticket);
+        }
+    }
+
+    void internalRemoveTournamentTicket(TournamentTicket ticket) {
+        tournamentTickets.remove(ticket);
     }
 
     public void addMediaPartner(MediaPartner partner) {
@@ -93,7 +119,8 @@ public class Tournament {
         if (stages.contains(stage)) {
             throw new InvalidValueException("This stage is already part of the tournament.");
         }
-        stages.add(stage);
+        // reverse connection – Stage will call internalAddStage(...)
+        stage.setTournament(this);
     }
 
     public GroupStage createGroupStage(String stageName,
@@ -108,9 +135,10 @@ public class Tournament {
                 nextStageId++,
                 stageName.trim(),
                 numberOfGroups,
-                teamsPerGroup
+                teamsPerGroup,
+                this
         );
-        stages.add(stage);
+//        stages.add(stage);
         return stage;
     }
 
@@ -126,10 +154,31 @@ public class Tournament {
                 nextStageId++,
                 stageName.trim(),
                 numberOfRounds,
-                matchType
+                matchType,
+                this
         );
-        stages.add(stage);
+//        stages.add(stage);
         return stage;
+    }
+
+    // NEW
+    public List<TournamentTicket> getTournamentTickets() {
+        return Collections.unmodifiableList(tournamentTickets);
+    }
+
+    // NEW – to showcase composition deletion in tests
+    public void delete() {
+        // delete all stages (and their matches)
+        for (Stage stage : new ArrayList<>(stages)) {
+            stage.delete();
+        }
+
+        // delete all tournament tickets
+        for (TournamentTicket ticket : new ArrayList<>(tournamentTickets)) {
+            ticket.delete();
+        }
+
+        extent.remove(this);
     }
 
     public void addTeam(Team team) {
