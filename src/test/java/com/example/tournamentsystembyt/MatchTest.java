@@ -3,14 +3,13 @@ package com.example.tournamentsystembyt;
 import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
 import com.example.tournamentsystembyt.exceptions.NullObjectException;
-import com.example.tournamentsystembyt.model.GroupStage;
-import com.example.tournamentsystembyt.model.Match;
-import com.example.tournamentsystembyt.model.Stage;
+import com.example.tournamentsystembyt.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,11 +18,21 @@ class MatchTest {
     private Stage stage;
     private Match match;
 
+    private Tournament tournament() {
+        return new Tournament("World Cup", "Football",
+                new Date(System.currentTimeMillis() - 10000000),
+                new Date(System.currentTimeMillis() - 1000),
+                1_000_000);
+    }
+
     @BeforeEach
     void setUp() {
-        stage = new GroupStage(1, "Groups", 4, 4);
+        Tournament t = tournament();
+        stage = new GroupStage(1, "Groups", 4, 4, t);
         match = new Match(LocalDate.now(), LocalTime.NOON, "Scheduled", stage);
     }
+
+    // OLD TESTS
 
     @Test
     void rejectsNullDateOrTimeOrStage() {
@@ -51,7 +60,7 @@ class MatchTest {
 
     @Test
     void testCannotStartMatchIfNotScheduled() {
-        match.start(); // Status is now Ongoing
+        match.start();
         assertThrows(InvalidValueException.class, () -> match.start());
     }
 
@@ -132,5 +141,83 @@ class MatchTest {
         assertEquals(2, match.getHomeScore());
         assertEquals(1, match.getAwayScore());
         assertEquals(5, match.getWinnerTeamId());
+    }
+
+    // REVERSE TESTS
+
+    @Test
+    void matchAddedToStageReverseConnection() {
+        assertTrue(stage.getMatches().contains(match));
+        assertEquals(stage, match.getStage());
+    }
+
+    @Test
+    void deletingStageDeletesMatches() {
+        stage.delete();
+        assertTrue(stage.getMatches().isEmpty());
+    }
+
+    @Test
+    void removingMatchFromStageDeletesMatch() {
+        Match m2 = new Match(LocalDate.now(), LocalTime.MIDNIGHT, "Scheduled", stage);
+
+        assertTrue(stage.getMatches().contains(m2));
+
+        stage.removeMatch(m2);
+
+        assertFalse(stage.getMatches().contains(m2));
+    }
+
+    // NEW TESTS — MATCH ↔ TOURNAMENT TICKET ASSOCIATION
+
+    @Test
+    void assigningTicketToMatchCreatesReverseConnection() {
+        Stadium stadium = new Stadium("Wembley", 90000, "London");
+        Tournament t = tournament();
+
+        TournamentTicket ticket = new TournamentTicket(
+                "T1", 50, "AVAILABLE", t, stadium, null);
+
+        ticket.setMatch(match);
+
+        assertTrue(match.getTournamentTickets().contains(ticket));
+        assertEquals(match, ticket.getMatch());
+    }
+
+    @Test
+    void ticketCannotMoveToAnotherMatch() {
+        Stadium s = new Stadium("Wembley", 90000, "London");
+        Tournament t = tournament();
+
+        TournamentTicket ticket = new TournamentTicket("T1", 50, "AVAILABLE", t, s, null);
+
+        ticket.setMatch(match);
+
+        Match otherMatch = new Match(LocalDate.now(), LocalTime.NOON, "Scheduled", stage);
+
+        assertThrows(InvalidValueException.class, () -> ticket.setMatch(otherMatch));
+    }
+
+    @Test
+    void deletingMatchRemovesTicketMatchReference() {
+        Stadium s = new Stadium("Wembley", 90000, "London");
+        Tournament t = tournament();
+        TournamentTicket ticket = new TournamentTicket("T1", 50, "AVAILABLE", t, s, null);
+
+        ticket.setMatch(match);
+
+        match.delete();
+
+        assertNull(ticket.getMatch());
+    }
+
+    @Test
+    void seatNumberCannotBeSetWithoutMatch() {
+        Stadium s = new Stadium("Wembley", 2000, "London");
+        Tournament t = tournament();
+        TournamentTicket ticket = new TournamentTicket("T1", 50, "AVAILABLE", t, s, null);
+
+        assertThrows(InvalidValueException.class,
+                () -> ticket.setSeatNumber(15));
     }
 }

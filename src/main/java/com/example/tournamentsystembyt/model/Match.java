@@ -10,6 +10,7 @@ import com.example.tournamentsystembyt.helpers.ExtentPersistence;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Match {
@@ -19,7 +20,9 @@ public class Match {
     private String status;          // "Scheduled", "Ongoing", "Finished", "Cancelled"
     private Integer homeScore;
     private Integer awayScore;
-    private Integer winnerTeamId;   // nullable until match ends
+    private Integer winnerTeamId;
+
+    private final List<TournamentTicket> tournamentTickets = new ArrayList<>();// nullable until match ends
 
     private Stage stage;
     private static final List<Match> extent = new ArrayList<>();
@@ -64,8 +67,23 @@ public class Match {
         this.winnerTeamId = null;
         addMatch(this);
     }
+
     public Match() {
         // Default constructor
+    }
+
+    void internalAddTournamentTicket(TournamentTicket ticket) {
+        if (!tournamentTickets.contains(ticket)) {
+            tournamentTickets.add(ticket);
+        }
+    }
+
+    void internalRemoveTournamentTicket(TournamentTicket ticket) {
+        tournamentTickets.remove(ticket);
+    }
+
+    public List<TournamentTicket> getTournamentTickets() {
+        return Collections.unmodifiableList(tournamentTickets);
     }
 
     public void assignReferee() {
@@ -165,7 +183,33 @@ public class Match {
         if (stage == null) {
             throw new NullObjectException("Stage");
         }
+        if (this.stage == stage) {
+            return;
+        }
+        // remove from old stage
+        if (this.stage != null) {
+            this.stage.internalRemoveMatch(this);
+        }
         this.stage = stage;
+        stage.internalAddMatch(this);
+    }
+
+    // NEW – used from Stage.delete()
+    public void delete() {
+
+        // remove tickets → ticket will keep stadium + tournament but lose match
+        for (TournamentTicket ticket : new ArrayList<>(tournamentTickets)) {
+            ticket.setMatch(null); // clears reverse association
+        }
+
+        // detach from stage
+        if (stage != null) {
+            Stage oldStage = stage;
+            stage = null;
+            oldStage.internalRemoveMatch(this);
+        }
+
+        extent.remove(this);
     }
 
     public LocalDate getStartDate() {
