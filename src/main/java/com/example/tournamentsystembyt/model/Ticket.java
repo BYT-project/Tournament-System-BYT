@@ -15,6 +15,7 @@ public class Ticket {
     private String type;
     private String status;
 
+
     private static final List<Ticket> extent = new ArrayList<>();
 
     private static void addTicket(Ticket t) {
@@ -111,6 +112,7 @@ public class Ticket {
         this.status = status.trim().toUpperCase();
     }
 
+
     public String getId() {
         return id;
     }
@@ -126,6 +128,8 @@ public class Ticket {
     public String getStatus() {
         return status;
     }
+
+
 
     public double calculateTotalPrice() {
         return price + (price * TAX_FEE);

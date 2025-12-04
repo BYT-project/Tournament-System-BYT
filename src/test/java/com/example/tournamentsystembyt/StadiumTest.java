@@ -1,8 +1,13 @@
 package com.example.tournamentsystembyt;
 
+import com.example.tournamentsystembyt.exceptions.InvalidValueException;
+import com.example.tournamentsystembyt.model.MatchTicket;
 import com.example.tournamentsystembyt.model.Stadium;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,4 +38,111 @@ class StadiumTest {
         assertThrows(Exception.class, () -> stadium.setLocation(""));
         assertThrows(Exception.class, () -> stadium.setLocation(" "));
     }
+
+    private Stadium createStadium(int capacity) {
+        return new Stadium("National Stadium", capacity, "Warsaw");
+    }
+
+    private MatchTicket createTicket(String id, Stadium stadium, int seatNumber) {
+        return new MatchTicket(id, 100.0, "AVAILABLE", stadium, seatNumber);
+    }
+
+    @AfterEach
+    void cleanUpExtent() {
+        Stadium.clearExtent();
+    }
+
+
+    @Test
+    void addMatchTicket_storesTicketBySeatAndSetsReverseConnection() {
+        Stadium stadium = createStadium(10000);
+        MatchTicket t1 = createTicket("T1", stadium, 1);
+        MatchTicket t2 = createTicket("T2", stadium, 2);
+
+        stadium.addMatchTicket(t1);
+        stadium.addMatchTicket(t2);
+
+        Map<Integer, MatchTicket> map = stadium.getTicketsBySeat();
+        assertEquals(2, map.size());
+        assertSame(t1, map.get(1));
+        assertSame(t2, map.get(2));
+
+        // reverse connection
+        assertSame(stadium, t1.getStadium());
+        assertSame(stadium, t2.getStadium());
+    }
+
+
+    @Test
+    void addMatchTicket_throwsWhenTicketIsNull() {
+        Stadium stadium = createStadium(10000);
+        assertThrows(InvalidValueException.class, () -> stadium.addMatchTicket(null));
+    }
+
+    @Test
+    void addMatchTicket_throwsWhenSeatAlreadyTaken() {
+        Stadium stadium = createStadium(10000);
+        MatchTicket t1 = createTicket("T1", stadium, 1);
+        MatchTicket t2 = createTicket("T2", stadium, 1); // same seat
+
+        stadium.addMatchTicket(t1);
+        assertThrows(InvalidValueException.class, () -> stadium.addMatchTicket(t2));
+        assertEquals(1, stadium.getTicketsBySeat().size());
+        assertSame(t1, stadium.getTicketsBySeat().get(1));
+    }
+
+    @Test
+    void addMatchTicket_throwsWhenTicketBelongsToAnotherStadium() {
+        Stadium s1 = createStadium(10000);
+        Stadium s2 = createStadium(10000);
+        MatchTicket ticket = createTicket("T1", s1, 1);
+
+        s1.addMatchTicket(ticket);
+
+        assertThrows(InvalidValueException.class, () -> s2.addMatchTicket(ticket));
+        assertSame(s1, ticket.getStadium());
+        assertTrue(s1.getTicketsBySeat().containsValue(ticket));
+        assertFalse(s2.getTicketsBySeat().containsValue(ticket));
+    }
+
+
+    @Test
+    void removeMatchTicket_removesTicketAndClearsReverseConnection() {
+        Stadium stadium = createStadium(10000);
+        MatchTicket t1 = createTicket("T1", stadium, 1);
+        MatchTicket t2 = createTicket("T2", stadium, 2);
+
+        stadium.addMatchTicket(t1);
+        stadium.addMatchTicket(t2);
+
+        stadium.removeMatchTicket(2);
+
+        assertEquals(1, stadium.getTicketsBySeat().size());
+        assertSame(t1, stadium.getTicketsBySeat().get(1));
+        assertNull(t2.getStadium());
+    }
+
+    @Test
+    void removeMatchTicket_throwsWhenSeatNotPresent() {
+        Stadium stadium = createStadium(10000);
+        MatchTicket t1 = createTicket("T1", stadium, 1);
+
+        stadium.addMatchTicket(t1);
+
+        assertThrows(InvalidValueException.class, () -> stadium.removeMatchTicket(2));
+        assertSame(t1, stadium.getTicketsBySeat().get(1));
+    }
+
+
+    @Test
+    void setSeatNumber_throwsWhenTicketAssignedToStadium() {
+        Stadium stadium = createStadium(10000);
+        MatchTicket ticket = createTicket("T1", stadium, 1);
+
+        stadium.addMatchTicket(ticket);
+
+        assertThrows(IllegalStateException.class, () -> ticket.setSeatNumber(5));
+        assertEquals(1, ticket.getSeatNumber());
+    }
+
 }

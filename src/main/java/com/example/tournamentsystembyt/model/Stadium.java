@@ -5,8 +5,7 @@ import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
 import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
 import com.example.tournamentsystembyt.helpers.ExtentPersistence;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Stadium {
 
@@ -14,6 +13,10 @@ public class Stadium {
     private int capacity;
     private String location;
     private static final List<Stadium> extent = new ArrayList<>();
+
+    //Qualified association
+    private final Map<Integer, MatchTicket> ticketsBySeat = new HashMap<>();
+
 
     private static void addStadium(Stadium s) {
         if (s == null) throw new IllegalArgumentException("Stadium cannot be null");
@@ -87,6 +90,62 @@ public class Stadium {
         }
     }
 
+
+    //Qualified association
+    public void addMatchTicket(MatchTicket ticket) {
+        if (ticket == null) {
+            throw new InvalidValueException("Ticket cannot be null");
+        }
+
+        int seatNumber = ticket.getSeatNumber();
+        if (seatNumber <= 0) {
+            throw new InvalidValueException("Seat number must be positive");
+        }
+
+        if (seatNumber > this.getCapacity()) {
+            throw new InvalidValueException("Seat number exceeds stadium capacity");
+        }
+
+        if (ticketsBySeat.containsKey(seatNumber)) {
+            throw new InvalidValueException("Seat " + seatNumber + " is already taken in this stadium");
+        }
+
+        if (ticket.getStadium() != null && ticket.getStadium() != this) {
+            throw new InvalidValueException("Ticket already belongs to another stadium");
+        }
+
+        ticketsBySeat.put(seatNumber, ticket);
+
+        if (ticket.getStadium() != this) {
+            ticket.setStadiumInternal(this);
+        }
+    }
+
+    public void removeMatchTicket(int seatNumber) {
+        MatchTicket ticket = ticketsBySeat.get(seatNumber);
+        if (ticket == null) {
+            throw new InvalidValueException("No ticket found at seat " + seatNumber + " in this stadium");
+        }
+
+        ticketsBySeat.remove(seatNumber);
+
+        if (ticket.getStadium() == this) {
+            ticket.setStadiumInternal(null);
+        }
+    }
+
+    public MatchTicket findTicketBySeat(int seatNumber) {
+        return ticketsBySeat.get(seatNumber);
+    }
+
+    void internalPutTicket(int seatNumber, MatchTicket ticket) {
+        ticketsBySeat.put(seatNumber, ticket);
+    }
+
+    void internalRemoveTicket(int seatNumber) {
+        ticketsBySeat.remove(seatNumber);
+    }
+
     public void setCapacity(int capacity) {
         validateCapacity(capacity);
         this.capacity = capacity;
@@ -95,6 +154,10 @@ public class Stadium {
     public void setLocation(String location) {
         validateLocation(location);
         this.location = location.trim();
+    }
+
+    public Map<Integer, MatchTicket> getTicketsBySeat() {
+        return ticketsBySeat;
     }
 
     public String getName() {

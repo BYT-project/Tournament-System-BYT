@@ -14,6 +14,12 @@ public class MediaPartner {
     private String email;
     private String type;
 
+    private Tournament tournament;
+
+    public Tournament getTournament() {
+        return tournament;
+    }
+
     private static final List<MediaPartner> extent = new ArrayList<>();
 
     private static void addMediaPartner(MediaPartner mp) {
@@ -93,6 +99,25 @@ public class MediaPartner {
         }
 
         this.type = trimmed;
+    }
+
+    public void setTournament(Tournament newTournament) {
+        if (this.tournament == newTournament) {
+            return; // nothing to do
+        }
+
+        // detach from old tournament
+        if (this.tournament != null) {
+            Tournament old = this.tournament;
+            this.tournament = null;   // avoid loops
+            old.internalRemoveMediaPartner(this);
+        }
+
+        // attach to new tournament
+        this.tournament = newTournament;
+        if (newTournament != null) {
+            newTournament.internalAddMediaPartner(this);
+        }
     }
 
     public String getName() {
