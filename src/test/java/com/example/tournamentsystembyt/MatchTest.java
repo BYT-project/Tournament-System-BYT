@@ -3,10 +3,7 @@ package com.example.tournamentsystembyt;
 import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
 import com.example.tournamentsystembyt.exceptions.NullObjectException;
-import com.example.tournamentsystembyt.model.GroupStage;
-import com.example.tournamentsystembyt.model.Match;
-import com.example.tournamentsystembyt.model.Stage;
-import com.example.tournamentsystembyt.model.Tournament;
+import com.example.tournamentsystembyt.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -146,7 +143,7 @@ class MatchTest {
         assertEquals(5, match.getWinnerTeamId());
     }
 
-    // NEW TESTS
+    // REVERSE TESTS
 
     @Test
     void matchAddedToStageReverseConnection() {
@@ -157,7 +154,6 @@ class MatchTest {
     @Test
     void deletingStageDeletesMatches() {
         stage.delete();
-
         assertTrue(stage.getMatches().isEmpty());
     }
 
@@ -170,5 +166,58 @@ class MatchTest {
         stage.removeMatch(m2);
 
         assertFalse(stage.getMatches().contains(m2));
+    }
+
+    // NEW TESTS — MATCH ↔ TOURNAMENT TICKET ASSOCIATION
+
+    @Test
+    void assigningTicketToMatchCreatesReverseConnection() {
+        Stadium stadium = new Stadium("Wembley", 90000, "London");
+        Tournament t = tournament();
+
+        TournamentTicket ticket = new TournamentTicket(
+                "T1", 50, "AVAILABLE", t, stadium, null);
+
+        ticket.setMatch(match);
+
+        assertTrue(match.getTournamentTickets().contains(ticket));
+        assertEquals(match, ticket.getMatch());
+    }
+
+    @Test
+    void ticketCannotMoveToAnotherMatch() {
+        Stadium s = new Stadium("Wembley", 90000, "London");
+        Tournament t = tournament();
+
+        TournamentTicket ticket = new TournamentTicket("T1", 50, "AVAILABLE", t, s, null);
+
+        ticket.setMatch(match);
+
+        Match otherMatch = new Match(LocalDate.now(), LocalTime.NOON, "Scheduled", stage);
+
+        assertThrows(InvalidValueException.class, () -> ticket.setMatch(otherMatch));
+    }
+
+    @Test
+    void deletingMatchRemovesTicketMatchReference() {
+        Stadium s = new Stadium("Wembley", 90000, "London");
+        Tournament t = tournament();
+        TournamentTicket ticket = new TournamentTicket("T1", 50, "AVAILABLE", t, s, null);
+
+        ticket.setMatch(match);
+
+        match.delete();
+
+        assertNull(ticket.getMatch());
+    }
+
+    @Test
+    void seatNumberCannotBeSetWithoutMatch() {
+        Stadium s = new Stadium("Wembley", 2000, "London");
+        Tournament t = tournament();
+        TournamentTicket ticket = new TournamentTicket("T1", 50, "AVAILABLE", t, s, null);
+
+        assertThrows(InvalidValueException.class,
+                () -> ticket.setSeatNumber(15));
     }
 }
