@@ -20,7 +20,7 @@ class StaffTest {
     void setUp() {
         staff = new Staff("John", "Doe", LocalDate.of(1990, 1, 1), "john.doe@example.com", "123456789", "Manager", 50000);
         staff2 = new Staff("Alice", "Smith", LocalDate.of(1985, 5, 15),  "alice@example.com", "987654321", "Coach", 60000);
-        staff3 = new Staff("Alice2", "Smith2", LocalDate.of(2005, 5, 15),  "alice2@example.com", "98222221", "Manager", 60000);
+        staff3 = new Staff("Tim", "Lox", LocalDate.of(2005, 5, 15),  "alice2@example.com", "98222221", "Manager", 60000);
 
     }
 

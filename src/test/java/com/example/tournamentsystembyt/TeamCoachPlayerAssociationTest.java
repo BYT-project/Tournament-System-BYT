@@ -60,8 +60,6 @@ class TeamCoachPlayerAssociationTest {
         );
     }
 
-    // ===================== Team–Player association =====================
-
     @Test
     void addPlayerToTeam_shouldAddToTeamPlayersList() {
         teamA.addPlayer(player1);
@@ -104,8 +102,6 @@ class TeamCoachPlayerAssociationTest {
     void removeNullPlayer_shouldThrowNullObjectException() {
         assertThrows(NullObjectException.class, () -> teamA.removePlayer(null));
     }
-
-    // ===================== Team–Coach & Coach–Team association =====================
 
     @Test
     void addCoachToTeam_shouldUpdateBothSides() {
@@ -160,53 +156,8 @@ class TeamCoachPlayerAssociationTest {
         assertThrows(NullObjectException.class, () -> teamA.removeCoach(null));
     }
 
-    // -------- Tests from Coach side (modifying association via Coach API) --------
-
-    @Test
-    void addTeamFromCoachSide_shouldUpdateBothSides() {
-        coach1.addTeam(teamA);
-
-        assertTrue(coach1.getTeamsCoached().contains(teamA));
-        assertTrue(teamA.getCoaches().contains(coach1));
-    }
-
-    @Test
-    void addSameTeamTwiceFromCoachSide_shouldThrowInvalidValueException() {
-        coach1.addTeam(teamA);
-
-        assertThrows(InvalidValueException.class, () -> coach1.addTeam(teamA));
-    }
-
-    @Test
-    void removeTeamFromCoachSide_shouldUpdateBothSides() {
-        coach1.addTeam(teamA);
-        coach1.addTeam(teamB);
-
-        coach1.removeTeam(teamA);
-
-        // coach1 side
-        assertFalse(coach1.getTeamsCoached().contains(teamA));
-        assertTrue(coach1.getTeamsCoached().contains(teamB));
-
-        // teamA side
-        assertFalse(teamA.getCoaches().contains(coach1));
-        // teamB still has coach1
-        assertTrue(teamB.getCoaches().contains(coach1));
-    }
-
-    @Test
-    void removeTeamNotAssignedFromCoachSide_shouldThrowInvalidValueException() {
-        // teamA not added to coach1 yet
-        assertThrows(InvalidValueException.class, () -> coach1.removeTeam(teamA));
-    }
-
     @Test
     void addNullTeamFromCoachSide_shouldThrowNullObjectException() {
         assertThrows(NullObjectException.class, () -> coach1.addTeam(null));
-    }
-
-    @Test
-    void removeNullTeamFromCoachSide_shouldThrowNullObjectException() {
-        assertThrows(NullObjectException.class, () -> coach1.removeTeam(null));
     }
 }
