@@ -4,6 +4,10 @@ import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
 import com.example.tournamentsystembyt.exceptions.NullObjectException;
 import com.example.tournamentsystembyt.model.GroupStage;
+import com.example.tournamentsystembyt.model.Team;
+import com.example.tournamentsystembyt.model.Referee;
+import com.example.tournamentsystembyt.model.Staff;
+import com.example.tournamentsystembyt.model.Stadium;
 import com.example.tournamentsystembyt.model.Match;
 import com.example.tournamentsystembyt.model.Stage;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +22,7 @@ class MatchTest {
 
     private Stage stage;
     private Match match;
+
 
     @BeforeEach
     void setUp() {
@@ -133,4 +138,65 @@ class MatchTest {
         assertEquals(1, match.getAwayScore());
         assertEquals(5, match.getWinnerTeamId());
     }
+
+    @Test
+    void addTeamToMatch_updatesBothSides() {
+        Team team = new Team("Warriors", "USA", "San Francisco", 50);
+
+        match.addTeam(team);
+
+        assertTrue(match.getTeams().contains(team));
+        assertTrue(team.getMatches().contains(match));
+    }
+
+    @Test
+    void matchCannotHaveMoreThanTwoTeams() {
+        Team t1 = new Team("A", "PL", "City1", 10);
+        Team t2 = new Team("B", "PL", "City2", 20);
+        Team t3 = new Team("C", "PL", "City3", 30);
+
+        match.addTeam(t1);
+        match.addTeam(t2);
+
+        assertThrows(InvalidValueException.class, () -> match.addTeam(t3));
+        assertEquals(2, match.getTeams().size());
+    }
+
+    @Test
+    void addNullTeamToMatch_throwsNullObjectException() {
+        assertThrows(NullObjectException.class, () -> match.addTeam(null));
+    }
+
+    @Test
+    void addStaffToMatch_updatesBothSides() {
+        Staff staff = new Staff("John", "Doe",
+                LocalDate.of(1990, 1, 1), "john.doe@example.com", "123456789",
+                "Manager", 50000);
+
+        match.addStaff(staff);
+
+        assertTrue(match.getStaffMembers().contains(staff));
+        assertTrue(staff.getMatches().contains(match));
+    }
+
+    @Test
+    void setStadiumOnMatch_updatesBothSides() {
+        Stadium stadium = new Stadium("Arena", 10000, "City");
+
+        match.setStadium(stadium);
+
+        assertEquals(stadium, match.getStadium());
+        assertEquals(match, stadium.getMatch());
+    }
+
+    @Test
+    void setStadium_cannotUseStadiumAlreadyAssignedToOtherMatch() {
+        Stadium stadium = new Stadium("Arena", 10000, "City");
+        Match otherMatch = new Match(LocalDate.now(), LocalTime.of(15, 0), "Scheduled", stage);
+
+        otherMatch.setStadium(stadium);
+
+        assertThrows(InvalidValueException.class, () -> match.setStadium(stadium));
+    }
+
 }

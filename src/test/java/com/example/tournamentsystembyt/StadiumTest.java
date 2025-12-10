@@ -9,7 +9,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;import com.example.tournamentsystembyt.exceptions.InvalidValueException;
+import com.example.tournamentsystembyt.model.Match;
+import com.example.tournamentsystembyt.model.Stage;
+import com.example.tournamentsystembyt.model.GroupStage;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 
 class StadiumTest {
 
@@ -144,5 +150,28 @@ class StadiumTest {
         assertThrows(IllegalStateException.class, () -> ticket.setSeatNumber(5));
         assertEquals(1, ticket.getSeatNumber());
     }
+
+    @Test
+    void setMatchOnStadium_updatesBothSides() {
+        Stage stage = new GroupStage(1, "Groups", 4, 4);
+        Match match = new Match(LocalDate.now(), LocalTime.NOON, "Scheduled", stage);
+
+        match.setStadium(stadium);
+
+        assertEquals(stadium, match.getStadium());
+        assertEquals(match, stadium.getMatch());
+    }
+
+    @Test
+    void setStadium_cannotReuseStadiumForAnotherMatch() {
+        Stage stage = new GroupStage(1, "Groups", 4, 4);
+        Match match1 = new Match(LocalDate.now(), LocalTime.NOON, "Scheduled", stage);
+        Match match2 = new Match(LocalDate.now(), LocalTime.MIDNIGHT, "Scheduled", stage);
+
+        match1.setStadium(stadium);
+
+        assertThrows(InvalidValueException.class, () -> match2.setStadium(stadium));
+    }
+
 
 }
