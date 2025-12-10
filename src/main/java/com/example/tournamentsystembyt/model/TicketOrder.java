@@ -91,7 +91,7 @@ public class TicketOrder {
     }
 
     public List<Ticket> getTickets() {
-        return Collections.unmodifiableList(tickets);
+        return tickets;
     }
 
     public double getAmount() {

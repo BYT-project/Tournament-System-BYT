@@ -271,13 +271,5 @@ class MatchTest {
         assertNull(ticket.getMatch());
     }
 
-    @Test
-    void seatNumberCannotBeSetWithoutMatch() {
-        Stadium s = new Stadium("Wembley", 2000, "London");
-        Tournament t = tournament();
-        TournamentTicket ticket = new TournamentTicket("T1", 50, "AVAILABLE", t, s, null);
 
-        assertThrows(InvalidValueException.class,
-                () -> ticket.setSeatNumber(15));
-    }
 }

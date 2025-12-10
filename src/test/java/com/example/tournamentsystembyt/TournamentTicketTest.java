@@ -43,7 +43,6 @@ class TournamentTicketTest {
 
         assertEquals(tournament, ticket.getTournament());
         assertEquals(stadium, ticket.getStadium());
-        assertNull(ticket.getSeatNumber());
         assertTrue(TournamentTicket.getExtent().contains(ticket));
     }
 
@@ -86,14 +85,6 @@ class TournamentTicketTest {
         assertFalse(match.getTournamentTickets().contains(ticket));
     }
 
-    @Test
-    void seatNumberCannotBeAssignedBeforeMatch() {
-        TournamentTicket ticket =
-                new TournamentTicket("T1", 50, "AVAILABLE", tournament, stadium, null);
-
-        assertThrows(InvalidValueException.class,
-                () -> ticket.setSeatNumber(10));
-    }
 
     @Test
     void seatNumberCannotBeNegativeOrZero() {

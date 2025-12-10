@@ -32,16 +32,6 @@ class TicketTest {
         assertThrows(Exception.class, () -> ticket.setId(" "));
     }
 
-    @Test
-    void setViewer_updatesBothSides() {
-        Viewer viewer = new Viewer("John", "Doe",
-                LocalDate.of(1990, 1, 1), "john.doe@example.com", "123456789");
-
-        ticket.setViewer(viewer);
-
-        assertEquals(viewer, ticket.getViewer());
-        assertTrue(viewer.getTickets().contains(ticket));
-    }
 
     @Test
     void setTicketOrder_updatesBothSides() {

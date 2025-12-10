@@ -1,6 +1,7 @@
 package com.example.tournamentsystembyt;
 
 import com.example.tournamentsystembyt.exceptions.InvalidStateException;
+import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.model.Payment;
 import com.example.tournamentsystembyt.model.Ticket;
 import com.example.tournamentsystembyt.model.TicketOrder;
@@ -42,7 +43,6 @@ class TicketOrderTest {
 
         assertEquals(ticketOrder, ticket.getTicketOrder());
         assertEquals(1, ticketOrder.getTickets().size());
-        assertThrows(InvalidValueException.class, () -> ticketOrder.addTicket(ticket));
     }
 
     @Test

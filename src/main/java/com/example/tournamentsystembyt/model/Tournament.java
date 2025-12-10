@@ -348,7 +348,7 @@ public class Tournament {
     }
 
     public List<MediaPartner> getMediaPartners() {
-        return Collections.unmodifiableList(mediaPartners);
+        return mediaPartners;
     }
 
     public List<Stage> getStages() {

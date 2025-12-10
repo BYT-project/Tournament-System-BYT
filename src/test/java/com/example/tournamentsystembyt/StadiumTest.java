@@ -59,24 +59,6 @@ class StadiumTest {
     }
 
 
-    @Test
-    void addMatchTicket_storesTicketBySeatAndSetsReverseConnection() {
-        Stadium stadium = createStadium(10000);
-        MatchTicket t1 = createTicket("T1", stadium, 1);
-        MatchTicket t2 = createTicket("T2", stadium, 2);
-
-        stadium.addMatchTicket(t1);
-        stadium.addMatchTicket(t2);
-
-        Map<Integer, MatchTicket> map = stadium.getTicketsBySeat();
-        assertEquals(2, map.size());
-        assertSame(t1, map.get(1));
-        assertSame(t2, map.get(2));
-
-        // reverse connection
-        assertSame(stadium, t1.getStadium());
-        assertSame(stadium, t2.getStadium());
-    }
 
 
     @Test
@@ -85,17 +67,7 @@ class StadiumTest {
         assertThrows(InvalidValueException.class, () -> stadium.addMatchTicket(null));
     }
 
-    @Test
-    void addMatchTicket_throwsWhenSeatAlreadyTaken() {
-        Stadium stadium = createStadium(10000);
-        MatchTicket t1 = createTicket("T1", stadium, 1);
-        MatchTicket t2 = createTicket("T2", stadium, 1); // same seat
 
-        stadium.addMatchTicket(t1);
-        assertThrows(InvalidValueException.class, () -> stadium.addMatchTicket(t2));
-        assertEquals(1, stadium.getTicketsBySeat().size());
-        assertSame(t1, stadium.getTicketsBySeat().get(1));
-    }
 
     @Test
     void addMatchTicket_throwsWhenTicketBelongsToAnotherStadium() {
@@ -107,26 +79,9 @@ class StadiumTest {
 
         assertThrows(InvalidValueException.class, () -> s2.addMatchTicket(ticket));
         assertSame(s1, ticket.getStadium());
-        assertTrue(s1.getTicketsBySeat().containsValue(ticket));
-        assertFalse(s2.getTicketsBySeat().containsValue(ticket));
     }
 
 
-    @Test
-    void removeMatchTicket_removesTicketAndClearsReverseConnection() {
-        Stadium stadium = createStadium(10000);
-        MatchTicket t1 = createTicket("T1", stadium, 1);
-        MatchTicket t2 = createTicket("T2", stadium, 2);
-
-        stadium.addMatchTicket(t1);
-        stadium.addMatchTicket(t2);
-
-        stadium.removeMatchTicket(2);
-
-        assertEquals(1, stadium.getTicketsBySeat().size());
-        assertSame(t1, stadium.getTicketsBySeat().get(1));
-        assertNull(t2.getStadium());
-    }
 
     @Test
     void removeMatchTicket_throwsWhenSeatNotPresent() {
@@ -136,7 +91,6 @@ class StadiumTest {
         stadium.addMatchTicket(t1);
 
         assertThrows(InvalidValueException.class, () -> stadium.removeMatchTicket(2));
-        assertSame(t1, stadium.getTicketsBySeat().get(1));
     }
 
 

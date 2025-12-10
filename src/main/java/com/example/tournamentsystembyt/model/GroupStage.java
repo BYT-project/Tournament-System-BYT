@@ -13,6 +13,10 @@ public class GroupStage extends Stage {
     private int teamsPerGroup;
 
     private static final List<GroupStage> extent = new ArrayList<>();
+
+    public GroupStage(int i, String groups, int i1, int i2) {
+    }
+
     private static void addStage(GroupStage gs) {
         if (gs == null) {
             throw new IllegalArgumentException("GroupStage cannot be null");

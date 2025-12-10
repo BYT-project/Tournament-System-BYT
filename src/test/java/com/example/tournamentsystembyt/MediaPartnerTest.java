@@ -74,7 +74,7 @@ class MediaPartnerTest {
     @Test
     void addMediaPartner_rejectsNull() {
         Tournament t = createTournament("World Cup");
-        assertThrows(NullObjectException.class, () -> t.addMediaPartner(null));
+        assertThrows(InvalidValueException.class, () -> t.addMediaPartner(null));
     }
 
     @Test
@@ -125,7 +125,7 @@ class MediaPartnerTest {
 
         t.addMediaPartner(attached);
 
-        assertThrows(IllegalArgumentException.class, () -> t.removeMediaPartner(null));
-        assertThrows(IllegalArgumentException.class, () -> t.removeMediaPartner(notAttached));
+        assertThrows(InvalidValueException.class, () -> t.removeMediaPartner(null));
+        assertThrows(InvalidValueException.class, () -> t.removeMediaPartner(notAttached));
     }
     }
