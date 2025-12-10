@@ -103,22 +103,25 @@ public class MediaPartner {
 
     public void setTournament(Tournament newTournament) {
         if (this.tournament == newTournament) {
-            return; // nothing to do
+            return;
         }
 
-        // detach from old tournament
         if (this.tournament != null) {
-            Tournament old = this.tournament;
-            this.tournament = null;   // avoid loops
-            old.internalRemoveMediaPartner(this);
+            Tournament oldTournament = this.tournament;
+            List<MediaPartner> partners = oldTournament.getMediaPartners();
+            partners.remove(this);
         }
 
-        // attach to new tournament
         this.tournament = newTournament;
+
         if (newTournament != null) {
-            newTournament.internalAddMediaPartner(this);
+            List<MediaPartner> partners = newTournament.getMediaPartners();
+            if (!partners.contains(this)) {
+                partners.add(this);
+            }
         }
     }
+
 
     public String getName() {
         return name;
