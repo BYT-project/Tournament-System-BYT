@@ -103,6 +103,55 @@ public class Team {
     public List<Player> getPlayers() { return players; }
     public List<Coach> getCoaches() { return coaches; }
 
+    public void addPlayer(Player player) {
+        if (player == null) {
+            throw new NullObjectException("Player");
+        }
+        if (players.contains(player)) {
+            // duplication
+            throw new InvalidValueException("Player is already in this team.");
+        }
+        players.add(player);   // multiplicity on Team side is 0..*, so always ok
+    }
+
+    public void removePlayer(Player player) {
+        if (player == null) {
+            throw new NullObjectException("Player");
+        }
+        if (!players.contains(player)) {
+            // trying to remove non-associated player
+            throw new InvalidValueException("Player is not a member of this team.");
+        }
+        // min multiplicity on Team side is 0, so removal is allowed
+        players.remove(player);
+    }
+
+
+    public void addCoach(Coach coach) {
+        if (coach == null) {
+            throw new NullObjectException("Coach");
+        }
+        if (coaches.contains(coach)) {
+            // duplication
+            throw new InvalidValueException("Coach is already assigned to this team.");
+        }
+
+        coaches.add(coach);
+        coach.addTeamInternal(this);  // update reverse side
+    }
+
+    public void removeCoach(Coach coach) {
+        if (coach == null) {
+            throw new NullObjectException("Coach");
+        }
+        if (!coaches.contains(coach)) {
+            throw new InvalidValueException("Coach is not assigned to this team.");
+        }
+
+        // min multiplicity is 0, so we can always remove, but we protect from invalid removal
+        coaches.remove(coach);
+        coach.removeTeamInternal(this);
+    }
     private static List<Team> extent = new ArrayList<>();
 
     public static List<Team> getExtent() {

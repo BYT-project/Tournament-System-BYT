@@ -41,15 +41,23 @@ public class GroupStage extends Stage {
     public GroupStage(int id,
                       String stageName,
                       int numberOfGroups,
-                      int teamsPerGroup) {
+                      int teamsPerGroup,
+                      Tournament tournament) {
 
-        super(id, stageName);
+
+        super(id, stageName, tournament);
         setNumberOfGroups(numberOfGroups);
         setTeamsPerGroup(teamsPerGroup);
         addStage(this);
     }
     public GroupStage(){
        super();
+    }
+
+    // NEW
+    public void delete() {
+        super.delete();
+        extent.remove(this);
     }
 
     public void setNumberOfGroups(int numberOfGroups) {

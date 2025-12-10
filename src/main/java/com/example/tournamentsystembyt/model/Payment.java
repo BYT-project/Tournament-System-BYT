@@ -1,9 +1,6 @@
 package com.example.tournamentsystembyt.model;
 
-import com.example.tournamentsystembyt.exceptions.InvalidStateException;
-import com.example.tournamentsystembyt.exceptions.InvalidValueException;
-import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
-import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
+import com.example.tournamentsystembyt.exceptions.*;
 import com.example.tournamentsystembyt.helpers.ExtentPersistence;
 
 import java.time.LocalDate;
@@ -16,6 +13,8 @@ public class Payment {
     private String method;
     private double amount;
     private LocalDate paidAt;
+    // NEW – composition whole
+    private TicketOrder ticketOrder;
 
     private static final List<Payment> extent = new ArrayList<>();
 
@@ -43,6 +42,7 @@ public class Payment {
         extent.clear();
         extent.addAll(loaded);
     }
+
     public Payment(String id, String method, double amount) {
         if (id == null || id.trim().isEmpty()) {
             throw new NullOrEmptyStringException("Payment ID");
@@ -53,7 +53,31 @@ public class Payment {
         setAmount(amount);
         addPayment(this);
     }
-    public Payment(){
+
+    // NEW composition at creation
+    public Payment(String id, String method, double amount, TicketOrder order) {
+        this(id, method, amount);
+        setTicketOrder(order);
+    }
+
+    // NEW
+    public TicketOrder getTicketOrder() {
+        return ticketOrder;
+    }
+
+    // NEW – cannot change "whole", must be non-null
+    public void setTicketOrder(TicketOrder ticketOrder) {
+        if (ticketOrder == null) {
+            throw new NullObjectException("Ticket order");
+        }
+        if (this.ticketOrder == ticketOrder) {
+            return;
+        }
+        if (this.ticketOrder != null && this.ticketOrder != ticketOrder) {
+            throw new InvalidStateException("Payment is already assigned to a different order.");
+        }
+        this.ticketOrder = ticketOrder;
+        ticketOrder.setPayment(this);   // reverse connection
     }
 
     public String getMethod() {
@@ -106,5 +130,15 @@ public class Payment {
             throw new InvalidStateException("Payment has not been made yet.");
         }
         this.paidAt = null;
+    }
+
+    // NEW – used from TicketOrder.delete()
+    public void delete() {
+        if (ticketOrder != null) {
+            TicketOrder order = ticketOrder;
+            ticketOrder = null;
+            order.clearPaymentOnDelete(this);
+        }
+        extent.remove(this);
     }
 }

@@ -43,13 +43,21 @@ public class PlayoffStage extends Stage {
     public PlayoffStage(int id,
                         String stageName,
                         int numberOfRounds,
-                        String matchType) {
+                        String matchType,
+                        Tournament tournament) {               // NEW
 
-        super(id, stageName);
+        super(id, stageName, tournament);                     // CHANGED
         setNumberOfRounds(numberOfRounds);
         setMatchType(matchType);
         addPlayoffStage(this);
     }
+
+    // NEW
+    public void delete() {
+        super.delete();
+        extent.remove(this);
+    }
+
     public PlayoffStage(){
        super();
     }

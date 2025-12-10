@@ -40,6 +40,11 @@ public class TicketOrder {
         return ExtentPersistence.saveExtent(TicketOrder.class, extent);
     }
 
+    // NEW – internal helper used by TournamentTicket.delete()
+    void internalRemoveTicket(Ticket ticket) {
+        tickets.remove(ticket);
+    }
+
     public static void loadExtent() {
         List<TicketOrder> loaded = ExtentPersistence.loadExtent(TicketOrder.class);
         extent.clear();
@@ -55,6 +60,24 @@ public class TicketOrder {
         this.status = "PENDING";
         addTicketOrder(this);
     }
+
+    public void setPayment(Payment payment) {
+        if (payment == null) {
+            throw new NullObjectException("Payment");
+        }
+        if (this.payment != null && this.payment != payment) {
+            throw new InvalidStateException("Ticket order already has a different payment.");
+        }
+        this.payment = payment;
+    }
+
+    // NEW – used only from Payment.delete()
+    void clearPaymentOnDelete(Payment payment) {
+        if (this.payment == payment) {
+            this.payment = null;
+        }
+    }
+
     public TicketOrder() {
        this.tickets = new ArrayList<>();
     }
@@ -115,10 +138,6 @@ public class TicketOrder {
         this.status = status.trim().toUpperCase();
     }
 
-    public void setPayment(Payment payment) {
-        this.payment = payment;
-    }
-
     public void addTicket(Ticket ticket) {
         if (ticket == null) {
             throw new NullObjectException("Ticket");
@@ -165,6 +184,13 @@ public class TicketOrder {
             throw new InvalidValueException("Insufficient payment amount.");
         }
 
+        // composition enforcement: attach payment to this order if not yet attached
+        if (payment.getTicketOrder() == null) {
+            payment.setTicketOrder(this);
+        } else if (payment.getTicketOrder() != this) {
+            throw new InvalidValueException("Payment is already assigned to a different ticket order.");
+        }
+
         payment.pay();
         this.payment = payment;
         this.status = "PAID";
@@ -178,5 +204,13 @@ public class TicketOrder {
             throw new InvalidStateException("Cannot cancel a paid ticket order.");
         }
         this.status = "CANCELLED";
+    }
+
+    // NEW – to showcase composition deletion in unit tests
+    public void delete() {
+        if (payment != null) {
+            payment.delete();   // also removes from Payment.extent
+        }
+        extent.remove(this);
     }
 }

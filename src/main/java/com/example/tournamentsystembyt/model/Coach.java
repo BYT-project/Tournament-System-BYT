@@ -97,6 +97,28 @@ public class Coach extends Person {
         }
         this.experience = experience;
     }
+    // package-private on purpose – only Team should call these
+    void addTeamInternal(Team team) {
+        if (team == null) {
+            throw new NullObjectException("Team");
+        }
+        if (teamsCoached.contains(team)) {
+            // duplication
+            throw new InvalidValueException("Team is already in this coach's list.");
+        }
+        teamsCoached.add(team);
+    }
+
+    void removeTeamInternal(Team team) {
+        if (team == null) {
+            throw new NullObjectException("Team");
+        }
+        if (!teamsCoached.contains(team)) {
+            throw new InvalidValueException("This coach is not assigned to the given team.");
+        }
+        // min multiplicity here is 0, so removal is allowed
+        teamsCoached.remove(team);
+    }
 
     public String getRole() {
         return role;
