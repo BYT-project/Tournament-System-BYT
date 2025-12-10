@@ -3,8 +3,13 @@ package com.example.tournamentsystembyt;
 import com.example.tournamentsystembyt.model.Referee;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import com.example.tournamentsystembyt.model.Match;
+import com.example.tournamentsystembyt.model.Stage;
+import com.example.tournamentsystembyt.model.GroupStage;
+
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,5 +40,15 @@ class RefereeTest {
     @Test
     void testSetUnrealisticExperience() {
         assertThrows(Exception.class, () -> referee.setExperience(81));
+    }
+    @Test
+    void addMatchToReferee_updatesBothSides() {
+        Stage stage = new GroupStage(1, "Groups", 4, 4);
+        Match match = new Match(LocalDate.now(), LocalTime.NOON, "Scheduled", stage);
+
+        referee.addMatch(match);
+
+        assertTrue(referee.getMatches().contains(match));
+        assertTrue(match.getReferees().contains(referee));
     }
 }

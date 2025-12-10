@@ -4,6 +4,8 @@ import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
 import com.example.tournamentsystembyt.exceptions.NullObjectException;
 
+import java.util.Map;
+
 public class MatchTicket extends Ticket {
 
     private  Stadium stadium;
@@ -39,11 +41,38 @@ public class MatchTicket extends Ticket {
 
 
     //Qualified association
+    public void setStadium(Stadium newStadium) {
+        // If nothing changes, do nothing
+        if (this.stadium == newStadium) {
+            return;
+        }
+
+        if (this.stadium != null) {
+            Map<Integer, MatchTicket> oldMap = this.stadium.getTicketsBySeat();
+            Integer keyToRemove = null;
+            for (Map.Entry<Integer, MatchTicket> entry : oldMap.entrySet()) {
+                if (entry.getValue() == this) {
+                    keyToRemove = entry.getKey();
+                    break;
+                }
+            }
+            if (keyToRemove != null) {
+                oldMap.remove(keyToRemove);
+            }
+        }
+
+        this.stadium = newStadium;
+
+        if (newStadium != null) {
+            Map<Integer, MatchTicket> newMap = newStadium.getTicketsBySeat();
+            newMap.put(this.seatNumber, this);
+        }
+    }
+
     public void setSeatNumber(int seatNumber) {
         if (seatNumber <= 0) {
             throw new IllegalArgumentException("Seat number must be positive");
         }
-
 
         if (stadium != null) {
             throw new IllegalStateException(
@@ -55,13 +84,6 @@ public class MatchTicket extends Ticket {
         this.seatNumber = seatNumber;
     }
 
-
-    void setStadiumInternal(Stadium newStadium) {
-        this.stadium = newStadium;
-    }
-
-
-
     public Stadium getStadium() {
         return stadium;
     }
@@ -70,3 +92,4 @@ public class MatchTicket extends Ticket {
         return seatNumber;
     }
 }
+

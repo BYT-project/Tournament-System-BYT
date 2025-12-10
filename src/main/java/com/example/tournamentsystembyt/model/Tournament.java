@@ -104,43 +104,31 @@ public class Tournament {
 
     public void addMediaPartner(MediaPartner partner) {
         if (partner == null) {
-            throw new NullObjectException("Media partner");
+            throw new InvalidValueException("Media partner cannot be null");
         }
-        if (mediaPartners.contains(partner)) {
-            throw new InvalidValueException("This media partner is already registered.");
-        }
-        mediaPartners.add(partner);
 
-        if (partner.getTournament() != this) {
-            partner.setTournament(this);
+        if (mediaPartners.contains(partner)) {
+            throw new InvalidValueException("Media partner is already linked to this tournament");
         }
+
+        if (partner.getTournament() != null && partner.getTournament() != this) {
+            throw new InvalidValueException("Media partner already belongs to another tournament");
+        }
+
+        partner.setTournament(this);
     }
 
     public void removeMediaPartner(MediaPartner partner) {
         if (partner == null) {
-            throw new IllegalArgumentException("Media partner cannot be null");
+            throw new InvalidValueException("Media partner cannot be null");
         }
+
         if (!mediaPartners.contains(partner)) {
-            throw new IllegalArgumentException("Media partner is not part of this tournament");
+            throw new InvalidValueException("Media partner is not linked to this tournament");
         }
 
-        mediaPartners.remove(partner);
-
-        if (partner.getTournament() == this) {
-            partner.setTournament(null);
-        }
+        partner.setTournament(null);
     }
-
-    void internalAddMediaPartner(MediaPartner partner) {
-        if (!mediaPartners.contains(partner)) {
-            mediaPartners.add(partner);
-        }
-    }
-
-    void internalRemoveMediaPartner(MediaPartner partner) {
-        mediaPartners.remove(partner);
-    }
-
     public void addStage(Stage stage) {
         if (stage == null) {
             throw new NullObjectException("Stage");

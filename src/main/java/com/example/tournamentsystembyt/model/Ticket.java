@@ -15,6 +15,8 @@ public class Ticket {
     private String type;
     private String status;
 
+    private Viewer viewer;
+    private TicketOrder ticketOrder;
 
     private static final List<Ticket> extent = new ArrayList<>();
 
@@ -53,6 +55,49 @@ public class Ticket {
         addTicket(this);
     }
     public Ticket() {
+    }
+
+    public Viewer getViewer() {
+        return viewer;
+    }
+
+    public void setViewer(Viewer newViewer) {
+        if (this.viewer == newViewer) {
+            return;
+        }
+
+        if (this.viewer != null) {
+            Viewer old = this.viewer;
+            this.viewer = null;
+            old.getTickets().remove(this);
+        }
+        this.viewer = newViewer;
+
+        if (newViewer != null && !newViewer.getTickets().contains(this)) {
+            newViewer.getTickets().add(this);
+        }
+    }
+
+    public TicketOrder getTicketOrder() {
+        return ticketOrder;
+    }
+
+    public void setTicketOrder(TicketOrder newOrder) {
+        if (this.ticketOrder == newOrder) {
+            return;
+        }
+
+        if (this.ticketOrder != null) {
+            TicketOrder old = this.ticketOrder;
+            this.ticketOrder = null;
+            if (old.getTickets().contains(this)) {
+                old.getTickets().remove(this);
+            }
+        }
+        this.ticketOrder = newOrder;
+        if (newOrder != null && !newOrder.getTickets().contains(this)) {
+            newOrder.getTickets().add(this);
+        }
     }
 
     private void validateId(String id) {

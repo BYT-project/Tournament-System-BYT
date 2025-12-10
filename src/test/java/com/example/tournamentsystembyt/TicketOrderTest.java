@@ -7,6 +7,8 @@ import com.example.tournamentsystembyt.model.TicketOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,6 +34,33 @@ class TicketOrderTest {
         assertTrue(ticketOrder.getTickets().isEmpty());
         assertNull(ticketOrder.getPayment());
     }
+    @Test
+    void addTicket_setsOrderOnTicketAndPreventsDuplicates() {
+        Ticket ticket = new Ticket("T123", 100.0, "VIP", "AVAILABLE");
+
+        ticketOrder.addTicket(ticket);
+
+        assertEquals(ticketOrder, ticket.getTicketOrder());
+        assertEquals(1, ticketOrder.getTickets().size());
+        assertThrows(InvalidValueException.class, () -> ticketOrder.addTicket(ticket));
+    }
+
+    @Test
+    void removeTicket_updatesBothSidesAndChecksMultiplicity() {
+        Ticket t1 = new Ticket("T1", 100.0, "VIP", "AVAILABLE");
+        Ticket t2 = new Ticket("T2", 50.0, "Regular", "AVAILABLE");
+
+        ticketOrder.addTicket(t1);
+        ticketOrder.addTicket(t2);
+
+        ticketOrder.removeTicket(t2);
+
+        assertNull(t2.getTicketOrder());
+        assertEquals(1, ticketOrder.getTickets().size());
+
+        assertThrows(InvalidValueException.class, () -> ticketOrder.removeTicket(t1));
+    }
+
 
     @Test
     void testAddTicket() {

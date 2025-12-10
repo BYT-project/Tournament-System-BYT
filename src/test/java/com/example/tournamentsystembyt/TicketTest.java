@@ -5,6 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import com.example.tournamentsystembyt.model.Viewer;
+import com.example.tournamentsystembyt.model.TicketOrder;
+import java.time.LocalDate;
 
 class TicketTest {
 
@@ -27,6 +30,27 @@ class TicketTest {
     void testSetEmptyId() {
         assertThrows(Exception.class, () -> ticket.setId(""));
         assertThrows(Exception.class, () -> ticket.setId(" "));
+    }
+
+    @Test
+    void setViewer_updatesBothSides() {
+        Viewer viewer = new Viewer("John", "Doe",
+                LocalDate.of(1990, 1, 1), "john.doe@example.com", "123456789");
+
+        ticket.setViewer(viewer);
+
+        assertEquals(viewer, ticket.getViewer());
+        assertTrue(viewer.getTickets().contains(ticket));
+    }
+
+    @Test
+    void setTicketOrder_updatesBothSides() {
+        TicketOrder order = new TicketOrder("O1");
+
+        ticket.setTicketOrder(order);
+
+        assertEquals(order, ticket.getTicketOrder());
+        assertTrue(order.getTickets().contains(ticket));
     }
 
     @Test

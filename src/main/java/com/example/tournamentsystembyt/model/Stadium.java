@@ -13,6 +13,8 @@ public class Stadium {
     private int capacity;
     private String location;
     private static final List<Stadium> extent = new ArrayList<>();
+    private Match match;
+
 
     //Qualified association
     private final Map<Integer, MatchTicket> ticketsBySeat = new HashMap<>();
@@ -52,6 +54,31 @@ public class Stadium {
         addStadium(this);
     }
     public Stadium(){
+    }
+
+
+    public Match getMatch() {
+        return match;
+    }
+
+    public void setMatch(Match newMatch) {
+        if (this.match == newMatch) {
+            return;
+        }
+
+        if (this.match != null) {
+            Match old = this.match;
+            this.match = null;
+            if (old.getStadium() == this) {
+                old.setStadium(null);
+            }
+        }
+
+        this.match = newMatch;
+
+        if (newMatch != null && newMatch.getStadium() != this) {
+            newMatch.setStadium(this);
+        }
     }
 
     private void validateName(String name) {
@@ -114,11 +141,9 @@ public class Stadium {
             throw new InvalidValueException("Ticket already belongs to another stadium");
         }
 
-        ticketsBySeat.put(seatNumber, ticket);
-
-        if (ticket.getStadium() != this) {
-            ticket.setStadiumInternal(this);
-        }
+        // Delegate to ticket: it will update its own stadium reference
+        // and also add itself to this stadium's ticketsBySeat map.
+        ticket.setStadium(this);
     }
 
     public void removeMatchTicket(int seatNumber) {
@@ -127,24 +152,14 @@ public class Stadium {
             throw new InvalidValueException("No ticket found at seat " + seatNumber + " in this stadium");
         }
 
-        ticketsBySeat.remove(seatNumber);
-
-        if (ticket.getStadium() == this) {
-            ticket.setStadiumInternal(null);
-        }
+        // Ticket will remove itself from this stadium's map as part of setStadium(null)
+        ticket.setStadium(null);
     }
 
     public MatchTicket findTicketBySeat(int seatNumber) {
         return ticketsBySeat.get(seatNumber);
     }
 
-    void internalPutTicket(int seatNumber, MatchTicket ticket) {
-        ticketsBySeat.put(seatNumber, ticket);
-    }
-
-    void internalRemoveTicket(int seatNumber) {
-        ticketsBySeat.remove(seatNumber);
-    }
 
     public void setCapacity(int capacity) {
         validateCapacity(capacity);
