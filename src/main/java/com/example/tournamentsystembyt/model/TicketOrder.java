@@ -127,6 +127,28 @@ public class TicketOrder {
             throw new InvalidStateException("Cannot add tickets to a non-pending order.");
         }
         tickets.add(ticket);
+
+        if (ticket.getTicketOrder() != this) {
+            ticket.setTicketOrder(this);
+        }
+    }
+
+    public void removeTicket(Ticket ticket) {
+        if (ticket == null) {
+            throw new NullObjectException("Ticket");
+        }
+        if (!tickets.contains(ticket)) {
+            throw new InvalidValueException("Ticket is not in this order");
+        }
+        if (tickets.size() == 1) {
+            throw new InvalidValueException("TicketOrder must contain at least one ticket (1..* multiplicity)");
+        }
+
+        tickets.remove(ticket);
+
+        if (ticket.getTicketOrder() == this) {
+            ticket.setTicketOrder(null);
+        }
     }
 
     public void pay(Payment payment) {

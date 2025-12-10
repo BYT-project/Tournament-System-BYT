@@ -13,6 +13,8 @@ public class Stadium {
     private int capacity;
     private String location;
     private static final List<Stadium> extent = new ArrayList<>();
+    private Match match;
+
 
     //Qualified association
     private final Map<Integer, MatchTicket> ticketsBySeat = new HashMap<>();
@@ -52,6 +54,31 @@ public class Stadium {
         addStadium(this);
     }
     public Stadium(){
+    }
+
+
+    public Match getMatch() {
+        return match;
+    }
+
+    public void setMatch(Match newMatch) {
+        if (this.match == newMatch) {
+            return;
+        }
+
+        if (this.match != null) {
+            Match old = this.match;
+            this.match = null;
+            if (old.getStadium() == this) {
+                old.setStadium(null);
+            }
+        }
+
+        this.match = newMatch;
+
+        if (newMatch != null && newMatch.getStadium() != this) {
+            newMatch.setStadium(this);
+        }
     }
 
     private void validateName(String name) {

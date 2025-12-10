@@ -1,9 +1,12 @@
 package com.example.tournamentsystembyt.model;
 
 
+import com.example.tournamentsystembyt.exceptions.InvalidValueException;
+import com.example.tournamentsystembyt.exceptions.NullObjectException;
 import com.example.tournamentsystembyt.helpers.ExtentPersistence;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Team {
@@ -14,6 +17,9 @@ public class Team {
 
     private List<Player> players;
     private List<Coach> coaches;
+
+    private final List<Match> matches = new ArrayList<>();
+
 
     public Team(String name, String country, String city, int rankPoints) {
         setName(name);
@@ -38,6 +44,32 @@ public class Team {
         this.coaches = new ArrayList<>();
     }
 
+
+    public void addMatch(Match match) {
+        if (match == null) {
+            throw new NullObjectException("Match");
+        }
+        if (!matches.contains(match)) {
+            matches.add(match);
+        }
+        if (!match.getTeams().contains(this)) {
+            match.addTeam(this);
+        }
+    }
+
+    public void removeMatch(Match match) {
+        if (match == null) {
+            throw new NullObjectException("Match");
+        }
+        if (!matches.contains(match)) {
+            throw new InvalidValueException("Team is not part of this match");
+        }
+        matches.remove(match);
+
+        if (match.getTeams().contains(this)) {
+            match.removeTeam(this);
+        }
+    }
     public void setName(String name) {
         if (name == null || name.trim().isEmpty())
             throw new IllegalArgumentException("Team name cannot be empty.");
@@ -61,7 +93,9 @@ public class Team {
             throw new IllegalArgumentException("Rank points cannot be negative.");
         this.rankPoints = rankPoints;
     }
-
+    public List<Match> getMatches() {
+        return Collections.unmodifiableList(matches);
+    }
     public String getName() { return name; }
     public String getCountry() { return country; }
     public String getCity() { return city; }

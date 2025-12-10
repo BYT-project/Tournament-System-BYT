@@ -10,6 +10,7 @@ import com.example.tournamentsystembyt.helpers.ExtentPersistence;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Match {
@@ -20,6 +21,13 @@ public class Match {
     private Integer homeScore;
     private Integer awayScore;
     private Integer winnerTeamId;   // nullable until match ends
+
+    private final List<Team> teams = new ArrayList<>();
+    private final List<Referee> referees = new ArrayList<>();
+    private final List<Staff> staffMembers = new ArrayList<>();
+    private Stadium stadium;
+
+
 
     private Stage stage;
     private static final List<Match> extent = new ArrayList<>();
@@ -105,6 +113,150 @@ public class Match {
 
     public void recordEvent() {
         // Event handling logic later
+    }
+
+    public List<Team> getTeams() {
+        return Collections.unmodifiableList(teams);
+    }
+
+    public void addTeam(Team team) {
+        if (team == null) {
+            throw new NullObjectException("Team");
+        }
+        if (teams.contains(team)) {
+            throw new InvalidValueException("Team is already in this match");
+        }
+        if (teams.size() >= 2) {
+            throw new InvalidValueException("Match cannot have more than 2 teams");
+        }
+
+        teams.add(team);
+
+        if (!team.getMatches().contains(this)) {
+            team.addMatch(this);
+        }
+    }
+
+    public void removeTeam(Team team) {
+        if (team == null) {
+            throw new NullObjectException("Team");
+        }
+        if (!teams.contains(team)) {
+            throw new InvalidValueException("Team is not part of this match");
+        }
+
+        teams.remove(team);
+
+        if (team.getMatches().contains(this)) {
+            team.removeMatch(this);
+        }
+    }
+
+    public List<Referee> getReferees() {
+        return Collections.unmodifiableList(referees);
+    }
+
+    public void addReferee(Referee referee) {
+        if (referee == null) {
+            throw new NullObjectException("Referee");
+        }
+        if (referees.contains(referee)) {
+            throw new InvalidValueException("Referee already assigned to this match");
+        }
+
+        referees.add(referee);
+
+        if (!referee.getMatches().contains(this)) {
+            referee.addMatch(this);
+        }
+    }
+
+    public void removeReferee(Referee referee) {
+        if (referee == null) {
+            throw new NullObjectException("Referee");
+        }
+        if (!referees.contains(referee)) {
+            throw new InvalidValueException("Referee is not assigned to this match");
+        }
+
+        referees.remove(referee);
+
+        if (referee.getMatches().contains(this)) {
+            referee.removeMatch(this);
+        }
+    }
+
+    public List<Staff> getStaffMembers() {
+        return Collections.unmodifiableList(staffMembers);
+    }
+
+    public void addStaff(Staff staff) {
+        if (staff == null) {
+            throw new NullObjectException("Staff");
+        }
+        if (staffMembers.contains(staff)) {
+            throw new InvalidValueException("Staff already assigned to this match");
+        }
+
+        staffMembers.add(staff);
+
+        if (!staff.getMatches().contains(this)) {
+            staff.addMatch(this);
+        }
+    }
+
+    public void removeStaff(Staff staff) {
+        if (staff == null) {
+            throw new NullObjectException("Staff");
+        }
+        if (!staffMembers.contains(staff)) {
+            throw new InvalidValueException("Staff is not assigned to this match");
+        }
+
+        staffMembers.remove(staff);
+
+        if (staff.getMatches().contains(this)) {
+            staff.removeMatch(this);
+        }
+    }
+
+    public Stadium getStadium() {
+        return stadium;
+    }
+
+    public void setStadium(Stadium newStadium) {
+        if (newStadium == null) {
+            throw new NullObjectException("Stadium");
+        }
+        if (this.stadium == newStadium) {
+            return;
+        }
+
+        if (this.stadium != null) {
+            Stadium old = this.stadium;
+            this.stadium = null;
+            if (old.getMatch() == this) {
+                old.setMatch(null);
+            }
+        }
+
+        if (newStadium.getMatch() != null && newStadium.getMatch() != this) {
+            throw new InvalidValueException("Stadium already has a match assigned (1–1 multiplicity)");
+        }
+
+        this.stadium = newStadium;
+
+        if (newStadium.getMatch() != this) {
+            newStadium.setMatch(this);
+        }
+    }
+
+    public void clearStadium() {
+        if (this.stadium == null) {
+            throw new InvalidValueException("Match has no stadium assigned");
+        }
+        setStadium(this.stadium);
+        this.stadium = null;
     }
 
     public void setResults(int homeScore, int awayScore, int winnerTeamId) {

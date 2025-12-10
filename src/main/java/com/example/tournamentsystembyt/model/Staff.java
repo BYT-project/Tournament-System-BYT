@@ -2,16 +2,19 @@ package com.example.tournamentsystembyt.model;
 
 import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
+import com.example.tournamentsystembyt.exceptions.NullObjectException;
 import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
 import com.example.tournamentsystembyt.helpers.ExtentPersistence;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Staff extends Person {
     private String jobTitle;
     private double salary;
+    private final List<Match> matches = new ArrayList<>();
 
     private static final List<Staff> extent = new ArrayList<>();
 
@@ -72,6 +75,39 @@ public class Staff extends Person {
             throw new NegativeNumberException("Salary", salary);
         }
         this.salary = salary;
+    }
+    public List<Match> getMatches() {
+        return Collections.unmodifiableList(matches);
+    }
+
+    public void addMatch(Match match) {
+        if (match == null) {
+            throw new NullObjectException("Match");
+        }
+        if (!matches.contains(match)) {
+            matches.add(match);
+        }
+        if (!match.getStaffMembers().contains(this)) {
+            match.addStaff(this);
+        }
+    }
+
+    public void removeMatch(Match match) {
+        if (match == null) {
+            throw new NullObjectException("Match");
+        }
+        if (!matches.contains(match)) {
+            throw new InvalidValueException("Staff is not assigned to this match");
+        }
+        if (matches.size() == 1) {
+            throw new InvalidValueException("Staff must supervise at least one match (1..* multiplicity)");
+        }
+
+        matches.remove(match);
+
+        if (match.getStaffMembers().contains(this)) {
+            match.removeStaff(this);
+        }
     }
 
     public String getJobTitle() {
