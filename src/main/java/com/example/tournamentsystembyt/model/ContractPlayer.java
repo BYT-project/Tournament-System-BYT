@@ -70,15 +70,22 @@ public class ContractPlayer {
         setDescription(description);
         this.isActive = isActive;
 
-        // Simple rule: if we have an endDate, contract is not active
+        // if we have an endDate, contract is not active
         if (this.endDate != null && this.isActive) {
             throw new InvalidValueException("Contract cannot be active if it already has an end date.");
         }
 
         addContract(this);
+
+        // Register with Player and Team (reverse connections)
+        if (this.player != null) {
+            this.player.internalAddPlayerContract(this);
+        }
+        if (this.team != null) {
+            this.team.internalAddPlayerContract(this);
+        }
     }
 
-    // ---- getters ----
 
     public Player getPlayer() { return player; }
     public Team getTeam() { return team; }
@@ -88,18 +95,17 @@ public class ContractPlayer {
     public double getSalary() { return salary; }
     public String getDescription() { return description; }
 
-    // ---- setters with validation ----
 
     public void setPlayer(Player player) {
         if (player == null) throw new NullObjectException("Player");
         this.player = player;
-        // later: player.internalAddPlayerContract(this);
+        // registration is done in constructor to avoid duplicate calls
     }
 
     public void setTeam(Team team) {
         if (team == null) throw new NullObjectException("Team");
         this.team = team;
-        // later: team.internalAddPlayerContract(this);
+        // registration is done in constructor to avoid duplicate calls
     }
 
     public void setStartDate(LocalDate startDate) {
@@ -137,9 +143,6 @@ public class ContractPlayer {
         this.description = description.trim();
     }
 
-    // ---- domain behavior ----
-
-    /** Terminate contract on given date, auto sets isActive = false */
     public void terminate(LocalDate endDate) {
         if (!isActive) {
             throw new InvalidValueException("Contract is already inactive.");
@@ -147,7 +150,6 @@ public class ContractPlayer {
         setEndDate(endDate != null ? endDate : LocalDate.now());
     }
 
-    /** Give a raise / change salary while contract is active. */
     public void changeSalary(double newSalary) {
         if (!isActive) {
             throw new InvalidStateException("Cannot change salary on inactive contract.");
@@ -155,7 +157,6 @@ public class ContractPlayer {
         setSalary(newSalary);
     }
 
-    /** Marks contract as active again (e.g. mistake in end date). */
     public void reactivate() {
         if (isActive) {
             throw new InvalidStateException("Contract is already active.");
@@ -164,9 +165,15 @@ public class ContractPlayer {
         this.endDate = null;
     }
 
-    /** For completeness – if you ever delete player/team, you can cascade. */
+    // if we need to remove from extend
     public void delete() {
-        // later: remove from player & team collections if you add them
+        // remove from player & team collections
+        if (player != null) {
+            player.internalRemovePlayerContract(this);
+        }
+        if (team != null) {
+            team.internalRemovePlayerContract(this);
+        }
         extent.remove(this);
     }
 }

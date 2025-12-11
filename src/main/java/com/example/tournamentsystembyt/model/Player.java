@@ -2,11 +2,13 @@ package com.example.tournamentsystembyt.model;
 
 import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
+import com.example.tournamentsystembyt.exceptions.NullObjectException;
 import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
 import com.example.tournamentsystembyt.helpers.ExtentPersistence;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Player extends Person {
@@ -14,6 +16,9 @@ public class Player extends Person {
     private double weight;   // kilograms
     private String position;
     private int shirtNum;
+
+    // NEW: keep all player's contracts (history)
+    private final List<ContractPlayer> playerContracts = new ArrayList<>();
 
     private static final List<Player> extent = new ArrayList<>();
 
@@ -117,5 +122,20 @@ public class Player extends Person {
 
     public int getShirtNum() {
         return shirtNum;
+    }
+
+    // Contract history helpers
+
+    void internalAddPlayerContract(ContractPlayer c) {
+        if (c == null) throw new NullObjectException("ContractPlayer");
+        if (!playerContracts.contains(c)) playerContracts.add(c);
+    }
+
+    void internalRemovePlayerContract(ContractPlayer c) {
+        playerContracts.remove(c);
+    }
+
+    public List<ContractPlayer> getPlayerContracts() {
+        return Collections.unmodifiableList(playerContracts);
     }
 }

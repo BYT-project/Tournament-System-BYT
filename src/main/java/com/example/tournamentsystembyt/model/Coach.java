@@ -14,7 +14,10 @@ import java.util.List;
 public class Coach extends Person {
     private String role;
     private int experience; // in years
-    private final List<Team> teamsCoached;     // multi-valued attribute
+    private final List<Team> teamsCoached; // multi-valued attribute
+
+    // NEW: keep coach contract history
+    private final List<ContractCoach> coachContracts = new ArrayList<>();
 
     private static final List<Coach> extent = new ArrayList<>();
 
@@ -130,5 +133,20 @@ public class Coach extends Person {
 
     public List<Team> getTeamsCoached() {
         return Collections.unmodifiableList(new ArrayList<>(teamsCoached));
+    }
+
+    // Contract history helpers
+
+    void internalAddCoachContract(ContractCoach c) {
+        if (c == null) throw new NullObjectException("ContractCoach");
+        if (!coachContracts.contains(c)) coachContracts.add(c);
+    }
+
+    void internalRemoveCoachContract(ContractCoach c) {
+        coachContracts.remove(c);
+    }
+
+    public List<ContractCoach> getCoachContracts() {
+        return Collections.unmodifiableList(coachContracts);
     }
 }
