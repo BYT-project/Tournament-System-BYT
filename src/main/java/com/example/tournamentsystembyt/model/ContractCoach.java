@@ -77,6 +77,14 @@ public class ContractCoach {
         }
 
         addContract(this);
+
+        // Register with coach and team (reverse connection)
+        if (this.coach != null) {
+            this.coach.internalAddCoachContract(this);
+        }
+        if (this.team != null) {
+            this.team.internalAddCoachContract(this);
+        }
     }
 
     public Coach getCoach() { return coach; }
@@ -90,13 +98,11 @@ public class ContractCoach {
     public void setCoach(Coach coach) {
         if (coach == null) throw new NullObjectException("Coach");
         this.coach = coach;
-        // later: coach.internalAddCoachContract(this);
     }
 
     public void setTeam(Team team) {
         if (team == null) throw new NullObjectException("Team");
         this.team = team;
-        // later: team.internalAddCoachContract(this);
     }
 
     public void setStartDate(LocalDate startDate) {
@@ -157,7 +163,13 @@ public class ContractCoach {
     }
 
     public void delete() {
-        // later remove from coach & team collections
+        // remove from coach & team collections
+        if (coach != null) {
+            coach.internalRemoveCoachContract(this);
+        }
+        if (team != null) {
+            team.internalRemoveCoachContract(this);
+        }
         extent.remove(this);
     }
 }
