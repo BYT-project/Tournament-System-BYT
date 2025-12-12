@@ -108,7 +108,7 @@ public class Team {
 
     /**
      * Add a player to this team.
-     * Creates an active ContractPlayer(startDate = today, salary = 0.0, description = "Auto-created contract")
+     * Creates an active ContractPlayer(startDate = today, salary = 1000.0, description = "Auto-created contract")
      * and links it to player and team (history bag).
      */
     public void addPlayer(Player player) {
