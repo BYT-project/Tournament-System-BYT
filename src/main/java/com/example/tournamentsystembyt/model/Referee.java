@@ -16,11 +16,23 @@ public class Referee extends Person {
     private static final List<Referee> extent = new ArrayList<>();
     private final List<Match> matches = new ArrayList<>();
 
+    private Person person;
+
+
     private static void addReferee(Referee r) {
         if (r == null) {
             throw new IllegalArgumentException("Referee cannot be null");
         }
         extent.add(r);
+    }
+
+    public void delete() {
+        if (person == null) {
+            return;
+        }
+
+        Person owner = person;
+        owner.removeReferee();
     }
 
     public static List<Referee> getExtent() {
@@ -97,5 +109,13 @@ public class Referee extends Person {
 
     public int getExperience() {
         return experience;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
     }
 }

@@ -15,6 +15,8 @@ public class Coach extends Person {
     private String role;
     private int experience; // in years
     private final List<Team> teamsCoached; // multi-valued attribute
+    private Person person;
+
 
     // NEW: keep coach contract history
     private final List<ContractCoach> coachContracts = new ArrayList<>();
@@ -47,6 +49,21 @@ public class Coach extends Person {
         for (Coach c : loaded) {
             addCoach(c);
         }
+    }
+    public void delete() {
+        if (person == null) {
+            return;
+        }
+
+        Person owner = person;
+        owner.removeCoach();
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+    public void setPerson(Person newPerson) {
+        this.person = newPerson;
     }
 
     public Coach(String firstName,

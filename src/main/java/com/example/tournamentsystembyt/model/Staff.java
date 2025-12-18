@@ -19,6 +19,8 @@ public class Staff extends Person {
     //Supervisees (noun, plural) refers to people who are being supervised by someone else.
     private final List<Staff> supervisees = new ArrayList<>();
 
+    private Person person;
+
     private static final List<Staff> extent = new ArrayList<>();
 
     private static void addStaff(Staff s) {
@@ -61,6 +63,14 @@ public class Staff extends Person {
         super();
     }
 
+    public void delete() {
+        if (person == null) {
+            return;
+        }
+
+        Person owner = person;
+        owner.removeStaff();
+    }
 
     public void setJobTitle(String jobTitle) {
         if (jobTitle == null || jobTitle.trim().isEmpty()) {
@@ -71,6 +81,14 @@ public class Staff extends Person {
             throw new InvalidValueException("Job title must contain at least 2 characters.");
         }
         this.jobTitle = trimmed;
+    }
+
+
+    public Person getPerson() {
+        return person;
+    }
+    public void setPerson(Person newPerson) {
+        this.person = newPerson;
     }
 
     public void setSalary(double salary) {

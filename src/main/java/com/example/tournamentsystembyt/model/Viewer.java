@@ -12,6 +12,8 @@ import java.util.List;
 public class Viewer extends Person {
     private static final List<Viewer> extent = new ArrayList<>();
     private final List<Ticket> tickets = new ArrayList<>();
+    private Person person;
+
 
 
     private static void addViewer(Viewer v) {
@@ -76,6 +78,15 @@ public class Viewer extends Person {
         }
     }
 
+    public void delete() {
+        if (person == null) {
+            return;
+        }
+
+        Person owner = person;
+        owner.removeViewer();
+    }
+
     public Viewer(String firstName,
                   String lastName,
                   LocalDate dateOfBirth,
@@ -86,5 +97,13 @@ public class Viewer extends Person {
     }
     public Viewer() {
         super();
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
     }
 }

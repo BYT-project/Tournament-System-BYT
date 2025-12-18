@@ -1,8 +1,10 @@
 package com.example.tournamentsystembyt;
 
+import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NegativeNumberException;
 import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
 import com.example.tournamentsystembyt.model.Coach;
+import com.example.tournamentsystembyt.model.Viewer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -40,4 +42,17 @@ class CoachTest {
     void testSetNegativeExperience() {
         assertThrows(NegativeNumberException.class, () -> coach.setExperience(-1));
     }
+
+    @Test
+    void cannotDeleteCoach_ifItIsLastRole_completeConstraint() {
+        Viewer p = new Viewer("John", "Doe",
+                LocalDate.of(1990, 1, 1),
+                "john.doe@example.com",
+                "123456789");
+
+
+        p.assignCoach(coach);
+        assertThrows(InvalidValueException.class, coach::delete);
+    }
+
 }
