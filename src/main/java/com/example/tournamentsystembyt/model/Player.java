@@ -17,6 +17,9 @@ public class Player extends Person {
     private String position;
     private int shirtNum;
 
+    private Person person;
+
+
     // NEW: keep all player's contracts (history)
     private final List<ContractPlayer> playerContracts = new ArrayList<>();
 
@@ -122,6 +125,21 @@ public class Player extends Person {
 
     public int getShirtNum() {
         return shirtNum;
+    }
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person newPerson) {
+        this.person = newPerson;
+    }
+    public void delete() {
+        if (person == null) {
+            return;
+        }
+
+        Person owner = person;
+        owner.removePlayer();
     }
 
     // Contract history helpers
