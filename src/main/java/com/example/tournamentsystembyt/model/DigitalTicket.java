@@ -18,14 +18,6 @@ public class DigitalTicket {
         setDownloadLink(downloadLink);
         setQrCode(qrCode);
     }
-    public DigitalTicket(String downloadLink, String qrCode) {
-        if(ticket == null){
-            throw new NullObjectException("Ticket");
-        }
-        setDownloadLink(downloadLink);
-        setQrCode(qrCode);
-        setTicket(ticket);
-    }
 
     public void setDownloadLink(String downloadLink) {
         if (downloadLink == null || downloadLink.trim().isEmpty()) {
@@ -73,7 +65,7 @@ public class DigitalTicket {
         }
 
         if (ticket.getPhysicalTicket() == null) {
-            ticket.setPhysicalTicket(new PhysicalTicket(barcode));
+            ticket.setPhysicalTicket(new PhysicalTicket(ticket, barcode));
         }
     }
 

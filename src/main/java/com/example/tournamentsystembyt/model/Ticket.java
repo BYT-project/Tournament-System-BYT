@@ -227,7 +227,23 @@ public class Ticket {
     public void removeDigitalTicket() { setDigitalTicket(null); }
     public void removePhysicalTicket() { setPhysicalTicket(null); }
 
+    public void delete() {
+        removeDigitalTicket();
+        removePhysicalTicket();
+        extent.remove(this);
 
+        if (viewer != null) {
+            Viewer old = viewer;
+            viewer = null;
+            old.getTickets().remove(this);
+        }
+
+        if (ticketOrder != null) {
+            TicketOrder old = ticketOrder;
+            ticketOrder = null;
+            old.getTickets().remove(this);
+        }
+    }
 
     public double calculateTotalPrice() {
         return price + (price * TAX_FEE);

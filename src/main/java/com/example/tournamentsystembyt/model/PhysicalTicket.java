@@ -16,13 +16,6 @@ public class PhysicalTicket {
         this.ticket = ticket;
         setBarcode(barcode);
     }
-    public PhysicalTicket(String barcode) {
-        if(ticket == null){
-            throw new NullObjectException("Ticket");
-        }
-        setBarcode(barcode);
-        setTicket(ticket);
-    }
 
     public void setBarcode(String barcode) {
         if (barcode == null || barcode.trim().isEmpty()) {
@@ -57,7 +50,7 @@ public class PhysicalTicket {
         }
 
         if (ticket.getDigitalTicket() == null) {
-            ticket.setDigitalTicket(new DigitalTicket(downloadLink, qrCode));
+            ticket.setDigitalTicket(new DigitalTicket(ticket, downloadLink, qrCode));
         }
     }
 
