@@ -1,6 +1,7 @@
 package com.example.tournamentsystembyt;
 
 import com.example.tournamentsystembyt.model.GroupStage;
+import com.example.tournamentsystembyt.model.Stage;
 import com.example.tournamentsystembyt.model.Tournament;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,7 +49,7 @@ class GroupStageTest {
         assertThrows(Exception.class, () -> groupStage.setTeamsPerGroup(21));
     }
 
-    // NEW
+    // NEW – extent
 
     @Test
     void groupStageAddedToExtent() {
@@ -59,5 +60,15 @@ class GroupStageTest {
     void deletingGroupStageRemovesFromExtent() {
         groupStage.delete();
         assertFalse(GroupStage.getExtent().contains(groupStage));
+    }
+
+    // NEW – reverse connection (composition)
+
+    @Test
+    void groupStageHasBackReferenceToStage() {
+        Stage stage = groupStage.getStage();
+
+        assertNotNull(stage);
+        assertEquals(groupStage, stage.getGroupStage());
     }
 }

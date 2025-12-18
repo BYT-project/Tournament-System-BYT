@@ -1,29 +1,44 @@
 package com.example.tournamentsystembyt;
 
 import com.example.tournamentsystembyt.exceptions.InvalidValueException;
-import com.example.tournamentsystembyt.model.MatchTicket;
-import com.example.tournamentsystembyt.model.Stadium;
+import com.example.tournamentsystembyt.model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;import com.example.tournamentsystembyt.exceptions.InvalidValueException;
-import com.example.tournamentsystembyt.model.Match;
-import com.example.tournamentsystembyt.model.Stage;
-import com.example.tournamentsystembyt.model.GroupStage;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Date;
+import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 class StadiumTest {
 
     private Stadium stadium;
 
+    private Tournament tournament() {
+        return new Tournament(
+                "WC",
+                "Football",
+                new Date(System.currentTimeMillis() - 10000000),
+                new Date(System.currentTimeMillis() - 1000),
+                1000
+        );
+    }
+
+    private Stage stage() {
+        return new GroupStage(1, "Groups", 4, 4, tournament());
+    }
+
     @BeforeEach
     void setUp() {
         stadium = new Stadium("Test Stadium", 10000, "Test Location");
+    }
+
+    @AfterEach
+    void cleanUpExtent() {
+        Stadium.clearExtent();
     }
 
     @Test
@@ -53,21 +68,11 @@ class StadiumTest {
         return new MatchTicket(id, 100.0, "AVAILABLE", stadium, seatNumber);
     }
 
-    @AfterEach
-    void cleanUpExtent() {
-        Stadium.clearExtent();
-    }
-
-
-
-
     @Test
     void addMatchTicket_throwsWhenTicketIsNull() {
-        Stadium stadium = createStadium(10000);
-        assertThrows(InvalidValueException.class, () -> stadium.addMatchTicket(null));
+        assertThrows(InvalidValueException.class,
+                () -> stadium.addMatchTicket(null));
     }
-
-
 
     @Test
     void addMatchTicket_throwsWhenTicketBelongsToAnotherStadium() {
@@ -77,37 +82,35 @@ class StadiumTest {
 
         s1.addMatchTicket(ticket);
 
-        assertThrows(InvalidValueException.class, () -> s2.addMatchTicket(ticket));
+        assertThrows(InvalidValueException.class,
+                () -> s2.addMatchTicket(ticket));
+
         assertSame(s1, ticket.getStadium());
     }
 
-
-
     @Test
     void removeMatchTicket_throwsWhenSeatNotPresent() {
-        Stadium stadium = createStadium(10000);
         MatchTicket t1 = createTicket("T1", stadium, 1);
-
         stadium.addMatchTicket(t1);
 
-        assertThrows(InvalidValueException.class, () -> stadium.removeMatchTicket(2));
+        assertThrows(InvalidValueException.class,
+                () -> stadium.removeMatchTicket(2));
     }
-
 
     @Test
     void setSeatNumber_throwsWhenTicketAssignedToStadium() {
-        Stadium stadium = createStadium(10000);
         MatchTicket ticket = createTicket("T1", stadium, 1);
-
         stadium.addMatchTicket(ticket);
 
-        assertThrows(IllegalStateException.class, () -> ticket.setSeatNumber(5));
+        assertThrows(IllegalStateException.class,
+                () -> ticket.setSeatNumber(5));
+
         assertEquals(1, ticket.getSeatNumber());
     }
 
     @Test
     void setMatchOnStadium_updatesBothSides() {
-        Stage stage = new GroupStage(1, "Groups", 4, 4);
+        Stage stage = stage();
         Match match = new Match(LocalDate.now(), LocalTime.NOON, "Scheduled", stage);
 
         match.setStadium(stadium);
@@ -118,14 +121,13 @@ class StadiumTest {
 
     @Test
     void setStadium_cannotReuseStadiumForAnotherMatch() {
-        Stage stage = new GroupStage(1, "Groups", 4, 4);
+        Stage stage = stage();
         Match match1 = new Match(LocalDate.now(), LocalTime.NOON, "Scheduled", stage);
         Match match2 = new Match(LocalDate.now(), LocalTime.MIDNIGHT, "Scheduled", stage);
 
         match1.setStadium(stadium);
 
-        assertThrows(InvalidValueException.class, () -> match2.setStadium(stadium));
+        assertThrows(InvalidValueException.class,
+                () -> match2.setStadium(stadium));
     }
-
-
 }

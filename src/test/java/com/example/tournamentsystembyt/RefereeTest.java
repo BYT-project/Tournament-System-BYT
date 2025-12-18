@@ -1,21 +1,29 @@
 package com.example.tournamentsystembyt;
 
-import com.example.tournamentsystembyt.model.Referee;
+import com.example.tournamentsystembyt.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import com.example.tournamentsystembyt.model.Match;
-import com.example.tournamentsystembyt.model.Stage;
-import com.example.tournamentsystembyt.model.GroupStage;
 
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class RefereeTest {
 
     private Referee referee;
+
+    private Tournament tournament() {
+        return new Tournament(
+                "WC",
+                "Football",
+                new Date(System.currentTimeMillis() - 10000000),
+                new Date(System.currentTimeMillis() - 1000),
+                1000
+        );
+    }
 
     @BeforeEach
     void setUp() {
@@ -43,7 +51,7 @@ class RefereeTest {
     }
     @Test
     void addMatchToReferee_updatesBothSides() {
-        Stage stage = new GroupStage(1, "Groups", 4, 4);
+        Stage stage = new GroupStage(1, "Groups", 4, 4, tournament());
         Match match = new Match(LocalDate.now(), LocalTime.NOON, "Scheduled", stage);
 
         referee.addMatch(match);
