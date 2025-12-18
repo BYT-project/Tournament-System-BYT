@@ -14,6 +14,9 @@ public class Ticket {
     private double price;
     private String type;
     private String status;
+    //compositon associations
+    private DigitalTicket digitalTicket;
+    private PhysicalTicket physicalTicket;
 
     private Viewer viewer;
     private TicketOrder ticketOrder;
@@ -137,6 +140,44 @@ public class Ticket {
         }
     }
 
+    public void setDigitalTicket(DigitalTicket newDigitalTicket) {
+        if (this.digitalTicket == newDigitalTicket) return;
+
+        if (this.digitalTicket != null) {
+            DigitalTicket old = this.digitalTicket;
+            this.digitalTicket = null;
+            old.setTicket(null);
+        }
+
+        if (newDigitalTicket != null) {
+            if (newDigitalTicket.getTicket() != null && newDigitalTicket.getTicket() != this) {
+                throw new IllegalStateException("DigitalTicket already belongs to another Ticket");
+            }
+            this.digitalTicket = newDigitalTicket;
+            if (newDigitalTicket.getTicket() != this) newDigitalTicket.setTicket(this);
+        }
+    }
+
+    public void setPhysicalTicket(PhysicalTicket newPhysicalTicket) {
+        if (this.physicalTicket == newPhysicalTicket) return;
+
+        if (this.physicalTicket != null) {
+            PhysicalTicket old = this.physicalTicket;
+            this.physicalTicket = null;
+            old.setTicket(null);
+        }
+
+        if (newPhysicalTicket != null) {
+            if (newPhysicalTicket.getTicket() != null && newPhysicalTicket.getTicket() != this) {
+                throw new IllegalStateException("PhysicalTicket already belongs to another Ticket");
+            }
+            this.physicalTicket = newPhysicalTicket;
+            if (newPhysicalTicket.getTicket() != this) newPhysicalTicket.setTicket(this);
+        }
+    }
+
+
+
     public void setId(String id) {
         validateId(id);
         this.id = id.trim();
@@ -156,6 +197,9 @@ public class Ticket {
         validateStatus(status);
         this.status = status.trim().toUpperCase();
     }
+    public void setTicket(TicketOrder ticketOrder) {
+        this.ticketOrder = ticketOrder;
+    }
 
 
     public String getId() {
@@ -174,7 +218,32 @@ public class Ticket {
         return status;
     }
 
+    public DigitalTicket getDigitalTicket() {
+        return digitalTicket;
+    }
+    public PhysicalTicket getPhysicalTicket() {
+        return physicalTicket;
+    }
+    public void removeDigitalTicket() { setDigitalTicket(null); }
+    public void removePhysicalTicket() { setPhysicalTicket(null); }
 
+    public void delete() {
+        removeDigitalTicket();
+        removePhysicalTicket();
+        extent.remove(this);
+
+        if (viewer != null) {
+            Viewer old = viewer;
+            viewer = null;
+            old.getTickets().remove(this);
+        }
+
+        if (ticketOrder != null) {
+            TicketOrder old = ticketOrder;
+            ticketOrder = null;
+            old.getTickets().remove(this);
+        }
+    }
 
     public double calculateTotalPrice() {
         return price + (price * TAX_FEE);
