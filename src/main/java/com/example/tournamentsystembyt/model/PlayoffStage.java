@@ -13,6 +13,9 @@ public class PlayoffStage extends Stage {
     private int numberOfRounds;
     private String matchType;
 
+    // NEW – reverse composition reference
+    private final Stage stage;
+
     private static final List<PlayoffStage> extent = new ArrayList<>();
 
     private static void addPlayoffStage(PlayoffStage ps) {
@@ -23,7 +26,7 @@ public class PlayoffStage extends Stage {
     }
 
     public static List<PlayoffStage> getExtent() {
-        return new ArrayList<>(extent); // defensive copy
+        return new ArrayList<>(extent);
     }
 
     public static void clearExtent() {
@@ -44,22 +47,26 @@ public class PlayoffStage extends Stage {
                         String stageName,
                         int numberOfRounds,
                         String matchType,
-                        Tournament tournament) {               // NEW
+                        Tournament tournament) {
 
-        super(id, stageName, tournament);                     // CHANGED
+        super(id, stageName, tournament);
+        this.stage = this;
+
         setNumberOfRounds(numberOfRounds);
         setMatchType(matchType);
         addPlayoffStage(this);
+
+        // NEW – composition registration
+        super.attachPlayoffStage(this);
     }
 
-    // NEW
+    public Stage getStage() {
+        return stage;
+    }
+
     public void delete() {
         super.delete();
         extent.remove(this);
-    }
-
-    public PlayoffStage(){
-       super();
     }
 
     public void setNumberOfRounds(int numberOfRounds) {

@@ -12,10 +12,10 @@ public class GroupStage extends Stage {
     private int numberOfGroups;
     private int teamsPerGroup;
 
-    private static final List<GroupStage> extent = new ArrayList<>();
+    // NEW – reverse composition reference
+    private final Stage stage;
 
-    public GroupStage(int i, String groups, int i1, int i2) {
-    }
+    private static final List<GroupStage> extent = new ArrayList<>();
 
     private static void addStage(GroupStage gs) {
         if (gs == null) {
@@ -25,7 +25,7 @@ public class GroupStage extends Stage {
     }
 
     public static List<GroupStage> getExtent() {
-        return new ArrayList<>(extent); // encapsulation
+        return new ArrayList<>(extent);
     }
 
     public static void clearExtent() {
@@ -39,7 +39,7 @@ public class GroupStage extends Stage {
     public static void loadExtent() {
         List<GroupStage> loaded = ExtentPersistence.loadExtent(GroupStage.class);
         extent.clear();
-        extent.addAll(loaded); // load back
+        extent.addAll(loaded);
     }
 
     public GroupStage(int id,
@@ -48,17 +48,21 @@ public class GroupStage extends Stage {
                       int teamsPerGroup,
                       Tournament tournament) {
 
-
         super(id, stageName, tournament);
+        this.stage = this;
+
         setNumberOfGroups(numberOfGroups);
         setTeamsPerGroup(teamsPerGroup);
         addStage(this);
-    }
-    public GroupStage(){
-       super();
+
+        // NEW – composition registration
+        super.attachGroupStage(this);
     }
 
-    // NEW
+    public Stage getStage() {
+        return stage;
+    }
+
     public void delete() {
         super.delete();
         extent.remove(this);
