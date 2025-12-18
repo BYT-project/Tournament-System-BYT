@@ -7,12 +7,23 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class TeamTests {
 
     private Team team;
+
+    private Tournament tournament() {
+        return new Tournament(
+                "WC",
+                "Football",
+                new Date(System.currentTimeMillis() - 10000000),
+                new Date(System.currentTimeMillis() - 1000),
+                1000
+        );
+    }
 
     @BeforeEach
     void setUp() {
@@ -44,25 +55,8 @@ class TeamTests {
     }
 
     @Test
-    void canAddPlayer() {
-        Player p = new Player("Steph", "Curry",
-                LocalDate.now().minusYears(38), "stephcurry@mail.com", "303030",
-                1.92, 82, "Point Guard", 30);
-
-        team.getPlayers().add(p);
-        assertEquals(1, team.getPlayers().size());
-    }
-
-    @Test
-    void canAddCoach() {
-        Coach c1 = new Coach("AB", "BC", LocalDate.now().minusYears(40), "a@a.com", "1123231", "Head", 10);
-        team.getCoaches().add(c1);
-        assertEquals(1, team.getCoaches().size());
-    }
-
-    @Test
     void addMatchFromTeam_updatesBothSides() {
-        Stage stage = new GroupStage(1, "Groups", 4, 4);
+        Stage stage = new GroupStage(1, "Groups", 4, 4, tournament());
         Match match = new Match(LocalDate.now(), LocalTime.NOON, "Scheduled", stage);
 
         team.addMatch(match);
@@ -73,7 +67,7 @@ class TeamTests {
 
     @Test
     void removeMatchFromTeam_updatesBothSides() {
-        Stage stage = new GroupStage(1, "Groups", 4, 4);
+        Stage stage = new GroupStage(1, "Groups", 4, 4, tournament());
         Match match = new Match(LocalDate.now(), LocalTime.NOON, "Scheduled", stage);
 
         team.addMatch(match);

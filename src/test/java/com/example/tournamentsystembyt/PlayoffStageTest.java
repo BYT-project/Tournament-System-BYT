@@ -1,6 +1,7 @@
 package com.example.tournamentsystembyt;
 
 import com.example.tournamentsystembyt.model.PlayoffStage;
+import com.example.tournamentsystembyt.model.Stage;
 import com.example.tournamentsystembyt.model.Tournament;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,7 +49,7 @@ class PlayoffStageTest {
         assertThrows(Exception.class, () -> playoffStage.setMatchType(" "));
     }
 
-    // NEW
+    // NEW – extent
 
     @Test
     void playoffAddedToExtent() {
@@ -59,5 +60,15 @@ class PlayoffStageTest {
     void deletingPlayoffRemovesFromExtent() {
         playoffStage.delete();
         assertFalse(PlayoffStage.getExtent().contains(playoffStage));
+    }
+
+    // NEW – reverse connection
+
+    @Test
+    void playoffStageHasBackReferenceToStage() {
+        Stage stage = playoffStage.getStage();
+
+        assertNotNull(stage);
+        assertEquals(playoffStage, stage.getPlayoffStage());
     }
 }

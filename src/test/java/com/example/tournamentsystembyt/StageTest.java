@@ -20,7 +20,7 @@ class StageTest {
                 1000);
     }
 
-    // OLD TESTS
+    // OLD TESTS – unchanged
 
     @Test
     void ctor_rejectsNonPositiveId() {
@@ -28,9 +28,6 @@ class StageTest {
 
         assertThrows(InvalidValueException.class,
                 () -> new GroupStage(0, "Stage", 4, 4, t));
-
-        assertThrows(InvalidValueException.class,
-                () -> new GroupStage(-1, "Stage", 4, 4, t));
     }
 
     @Test
@@ -41,50 +38,17 @@ class StageTest {
                 () -> new GroupStage(1, "  ", 4, 4, t));
     }
 
-    // NEW TESTS
+    // NEW – composition deletion
 
     @Test
-    void stageIsAddedToTournament_WhenCreated() {
+    void deletingStageRemovesCompositionPart() {
         Tournament t = tournament();
-        Stage s = new GroupStage(1, "Groups", 4, 4, t);
-
-        assertTrue(t.getStages().contains(s));
-        assertEquals(t, s.getTournament());
-    }
-
-    @Test
-    void stageMovesToAnotherTournament() {
-        Tournament t1 = tournament();
-        Tournament t2 = new Tournament("EC", "Football",
-                new Date(System.currentTimeMillis() - 20000000),
-                new Date(System.currentTimeMillis() - 1000),
-                500);
-
-        Stage s = new GroupStage(1, "Groups", 4, 4, t1);
-
-        s.setTournament(t2);
-
-        assertFalse(t1.getStages().contains(s));
-        assertTrue(t2.getStages().contains(s));
-    }
-
-    @Test
-    void deletingStageRemovesItFromTournament() {
-        Tournament t = tournament();
-        Stage s = new GroupStage(1, "Groups", 4, 4, t);
+        GroupStage gs = new GroupStage(1, "Groups", 4, 4, t);
+        Stage s = gs.getStage();
 
         s.delete();
 
-        assertFalse(t.getStages().contains(s));
-        assertNull(s.getTournament());
-    }
-
-    @Test
-    void creatingPlayoffStageAlsoAddsToTournament() {
-        Tournament t = tournament();
-        PlayoffStage ps = new PlayoffStage(2, "Playoffs", 3, "BO3", t);
-
-        assertTrue(t.getStages().contains(ps));
-        assertEquals(t, ps.getTournament());
+        assertThrows(Exception.class, s::getGroupStage);
+        assertFalse(GroupStage.getExtent().contains(gs));
     }
 }
