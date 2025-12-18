@@ -6,7 +6,7 @@ import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
 
 public class PhysicalTicket {
 
-    private final Ticket ticket;
+    private Ticket ticket;
     private String barcode;
 
     public PhysicalTicket(Ticket ticket, String barcode) {
@@ -15,6 +15,13 @@ public class PhysicalTicket {
         }
         this.ticket = ticket;
         setBarcode(barcode);
+    }
+    public PhysicalTicket(String barcode) {
+        if(ticket == null){
+            throw new NullObjectException("Ticket");
+        }
+        setBarcode(barcode);
+        setTicket(ticket);
     }
 
     public void setBarcode(String barcode) {
@@ -26,6 +33,32 @@ public class PhysicalTicket {
             throw new InvalidValueException("Barcode must contain at least 6 characters.");
         }
         this.barcode = trimmed;
+    }
+    void setTicket(Ticket newTicket) {
+        if (this.ticket == newTicket) return;
+
+        if (this.ticket != null) {
+            Ticket old = this.ticket;
+            this.ticket = null;
+            if (old.getPhysicalTicket() == this) {
+                old.setPhysicalTicket(null);
+            }
+        }
+
+        this.ticket = newTicket;
+        if (newTicket != null && newTicket.getPhysicalTicket() != this) {
+            newTicket.setPhysicalTicket(this);
+        
+    }
+}
+    public void changeToDigitalTicket(String downloadLink, String qrCode) {
+        if (ticket == null) {
+            throw new IllegalStateException("PhysicalTicket is not attached to any Ticket");
+        }
+
+        if (ticket.getDigitalTicket() == null) {
+            ticket.setDigitalTicket(new DigitalTicket(downloadLink, qrCode));
+        }
     }
 
     public Ticket getTicket() {
