@@ -24,7 +24,7 @@ public class GroupStage extends Stage {
         extent.add(gs);
     }
 
-    public static List<GroupStage> getExtent() {
+    public static List<Stage> getExtent() {
         return new ArrayList<>(extent);
     }
 

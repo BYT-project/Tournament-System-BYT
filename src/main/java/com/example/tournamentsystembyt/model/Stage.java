@@ -3,6 +3,7 @@ package com.example.tournamentsystembyt.model;
 import com.example.tournamentsystembyt.exceptions.InvalidValueException;
 import com.example.tournamentsystembyt.exceptions.NullObjectException;
 import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
+import com.example.tournamentsystembyt.helpers.ExtentPersistence;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,12 +22,40 @@ public class Stage {
     private GroupStage groupStageComponent;
     private PlayoffStage playoffStageComponent;
 
+    private static final List<Stage> extent = new ArrayList<>();
+
+    private static void addStage(Stage stage) {
+        if (stage == null) {
+            throw new IllegalArgumentException("Stage cannot be null");
+        }
+        extent.add(stage);
+    }
+
+    public static List<Stage> getExtent() {
+        return new ArrayList<>(extent);
+    }
+
+    public static void clearExtent() {
+        extent.clear();
+    }
+
+    public static boolean saveExtent() {
+        return ExtentPersistence.saveExtent(Stage.class, extent);
+    }
+
+    public static void loadExtent() {
+        List<Stage> loaded = ExtentPersistence.loadExtent(Stage.class);
+        extent.clear();
+        extent.addAll(loaded);
+    }
+
     public Stage(int id, String name, Tournament tournament) {
         setId(id);
         setName(name);
         this.isCompleted = false;
         this.matches = new ArrayList<>();
         setTournament(tournament);
+        addStage(this);
     }
 
     public Stage() {
@@ -133,6 +162,8 @@ public class Stage {
         // NEW – composition cleanup
         groupStageComponent = null;
         playoffStageComponent = null;
+
+        extent.remove(this);
     }
 
     public void setId(int id) {

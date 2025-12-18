@@ -45,7 +45,9 @@ class StageInheritanceViaCompositionTest {
         Stage s = gs.getStage();
 
         assertThrows(InvalidValueException.class,
-                () -> new PlayoffStage(2, "Playoffs", 3, "BO3", t));
+                () -> s.attachPlayoffStage(
+                        new PlayoffStage(2, "Playoffs", 3, "BO3", t)
+                ));
     }
 
     @Test

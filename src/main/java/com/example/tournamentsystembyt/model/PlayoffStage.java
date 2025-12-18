@@ -25,7 +25,7 @@ public class PlayoffStage extends Stage {
         extent.add(ps);
     }
 
-    public static List<PlayoffStage> getExtent() {
+    public static List<Stage> getExtent() {
         return new ArrayList<>(extent);
     }
 
