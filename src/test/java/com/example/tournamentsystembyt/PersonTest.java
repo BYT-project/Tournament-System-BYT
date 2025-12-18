@@ -1,9 +1,7 @@
 package com.example.tournamentsystembyt;
 
-import com.example.tournamentsystembyt.exceptions.InvalidDateException;
-import com.example.tournamentsystembyt.exceptions.InvalidEmailException;
-import com.example.tournamentsystembyt.exceptions.NullObjectException;
-import com.example.tournamentsystembyt.exceptions.NullOrEmptyStringException;
+import com.example.tournamentsystembyt.exceptions.*;
+import com.example.tournamentsystembyt.model.Coach;
 import com.example.tournamentsystembyt.model.Person;
 import com.example.tournamentsystembyt.model.Viewer;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,4 +56,13 @@ class PersonTest {
         assertThrows(NullOrEmptyStringException.class, () -> person.setPhone(""));
         assertThrows(NullOrEmptyStringException.class, () -> person.setPhone(" "));
     }
+
+    @Test
+    void removingLastRole_violatesCompleteConstraint() {
+        // person is created as a Viewer in setUp(), so it has exactly 1 role initially.
+        // removing it should fail due to Complete inheritance constraint
+        assertThrows(InvalidValueException.class, () -> person.removeViewer());
+    }
+
+
 }
