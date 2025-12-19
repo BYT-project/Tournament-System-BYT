@@ -50,6 +50,59 @@ public class Coach extends Person {
             addCoach(c);
         }
     }
+
+    public Player changeToPlayer(Player newRole) {
+        if (newRole == null) throw new IllegalArgumentException("Player role cannot be null");
+        Person p = getPerson();
+        if (p == null) throw new IllegalStateException("Coach is not attached to any Person");
+
+        if (newRole.getPerson() != null && newRole.getPerson() != p)
+            throw new IllegalStateException("Player role already belongs to another Person");
+
+        p.assignPlayer(newRole);
+        p.removeCoach();
+        return newRole;
+    }
+
+    public Referee changeToReferee(Referee newRole) {
+        if (newRole == null) throw new IllegalArgumentException("Referee role cannot be null");
+        Person p = getPerson();
+        if (p == null) throw new IllegalStateException("Coach is not attached to any Person");
+
+        if (newRole.getPerson() != null && newRole.getPerson() != p)
+            throw new IllegalStateException("Referee role already belongs to another Person");
+
+        p.assignReferee(newRole);
+        p.removeCoach();
+        return newRole;
+    }
+
+    public Staff changeToStaff(Staff newRole) {
+        if (newRole == null) throw new IllegalArgumentException("Staff role cannot be null");
+        Person p = getPerson();
+        if (p == null) throw new IllegalStateException("Coach is not attached to any Person");
+
+        if (newRole.getPerson() != null && newRole.getPerson() != p)
+            throw new IllegalStateException("Staff role already belongs to another Person");
+
+        p.assignStaff(newRole);
+        p.removeCoach();
+        return newRole;
+    }
+
+    public Viewer changeToViewer(Viewer newRole) {
+        if (newRole == null) throw new IllegalArgumentException("Viewer role cannot be null");
+        Person p = getPerson();
+        if (p == null) throw new IllegalStateException("Coach is not attached to any Person");
+
+        if (newRole.getPerson() != null && newRole.getPerson() != p)
+            throw new IllegalStateException("Viewer role already belongs to another Person");
+
+        p.assignViewer(newRole);
+        p.removeCoach();
+        return newRole;
+    }
+
     public void delete() {
         if (person == null) {
             return;

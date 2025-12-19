@@ -70,6 +70,60 @@ public class Player extends Person {
         super();
     }
 
+    public Coach changeToCoach(Coach newRole) {
+        if (newRole == null) throw new IllegalArgumentException("Coach role cannot be null");
+        Person p = getPerson();
+        if (p == null) throw new IllegalStateException("Player is not attached to any Person");
+
+        if (newRole.getPerson() != null && newRole.getPerson() != p)
+            throw new IllegalStateException("Coach role already belongs to another Person");
+
+        p.assignCoach(newRole);
+        p.removePlayer();
+        return newRole;
+    }
+
+    public Referee changeToReferee(Referee newRole) {
+        if (newRole == null) throw new IllegalArgumentException("Referee role cannot be null");
+        Person p = getPerson();
+        if (p == null) throw new IllegalStateException("Player is not attached to any Person");
+
+        if (newRole.getPerson() != null && newRole.getPerson() != p)
+            throw new IllegalStateException("Referee role already belongs to another Person");
+
+        p.assignReferee(newRole);
+        p.removePlayer();
+        return newRole;
+    }
+
+    public Staff changeToStaff(Staff newRole) {
+        if (newRole == null) throw new IllegalArgumentException("Staff role cannot be null");
+        Person p = getPerson();
+        if (p == null) throw new IllegalStateException("Player is not attached to any Person");
+
+        if (newRole.getPerson() != null && newRole.getPerson() != p)
+            throw new IllegalStateException("Staff role already belongs to another Person");
+
+        p.assignStaff(newRole);
+        p.removePlayer();
+        return newRole;
+    }
+
+    public Viewer changeToViewer(Viewer newRole) {
+        if (newRole == null) throw new IllegalArgumentException("Viewer role cannot be null");
+        Person p = getPerson();
+        if (p == null) throw new IllegalStateException("Player is not attached to any Person");
+
+        if (newRole.getPerson() != null && newRole.getPerson() != p)
+            throw new IllegalStateException("Viewer role already belongs to another Person");
+
+        p.assignViewer(newRole);
+        p.removePlayer();
+        return newRole;
+    }
+
+
+
     public void setHeight(double height) {
         if (height <= 0) {
             throw new NegativeNumberException("Height", height);
