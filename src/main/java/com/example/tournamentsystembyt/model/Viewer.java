@@ -63,6 +63,59 @@ public class Viewer extends Person {
         }
     }
 
+    public Coach changeToCoach(Coach newRole) {
+        if (newRole == null) throw new IllegalArgumentException("Coach role cannot be null");
+        Person p = getPerson();
+        if (p == null) throw new IllegalStateException("Viewer is not attached to any Person");
+
+        if (newRole.getPerson() != null && newRole.getPerson() != p)
+            throw new IllegalStateException("Coach role already belongs to another Person");
+
+        p.assignCoach(newRole);
+        p.removeViewer();
+        return newRole;
+    }
+
+    public Player changeToPlayer(Player newRole) {
+        if (newRole == null) throw new IllegalArgumentException("Player role cannot be null");
+        Person p = getPerson();
+        if (p == null) throw new IllegalStateException("Viewer is not attached to any Person");
+
+        if (newRole.getPerson() != null && newRole.getPerson() != p)
+            throw new IllegalStateException("Player role already belongs to another Person");
+
+        p.assignPlayer(newRole);
+        p.removeViewer();
+        return newRole;
+    }
+
+    public Referee changeToReferee(Referee newRole) {
+        if (newRole == null) throw new IllegalArgumentException("Referee role cannot be null");
+        Person p = getPerson();
+        if (p == null) throw new IllegalStateException("Viewer is not attached to any Person");
+
+        if (newRole.getPerson() != null && newRole.getPerson() != p)
+            throw new IllegalStateException("Referee role already belongs to another Person");
+
+        p.assignReferee(newRole);
+        p.removeViewer();
+        return newRole;
+    }
+
+    public Staff changeToStaff(Staff newRole) {
+        if (newRole == null) throw new IllegalArgumentException("Staff role cannot be null");
+        Person p = getPerson();
+        if (p == null) throw new IllegalStateException("Viewer is not attached to any Person");
+
+        if (newRole.getPerson() != null && newRole.getPerson() != p)
+            throw new IllegalStateException("Staff role already belongs to another Person");
+
+        p.assignStaff(newRole);
+        p.removeViewer();
+        return newRole;
+    }
+
+
     public void removeTicket(Ticket ticket) {
         if (ticket == null) {
             throw new NullObjectException("Ticket");
